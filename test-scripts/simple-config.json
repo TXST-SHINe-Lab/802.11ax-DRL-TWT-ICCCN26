@@ -1,0 +1,135 @@
+{
+    "description": "TWT Configuration Sequence for 16 STAs - Simple controller loops through these configs. NOTE: C++ adds 2ms base offset automatically, so sp_offset_ms is ADDITIONAL offset on top of that.",
+    "num_sta": 16,
+    
+    "configs": [
+        {
+            "name": "Config 1: All STAs in 1 group (wide window)",
+            "num_active_twt_groups": 1,
+            "twt_groups": [
+                {
+                    "group_id": 0,
+                    "enabled": true,
+                    "wake_interval_ms": 102.4,
+                    "wake_duration_ms": 80.0,
+                    "sp_offset_ms": 0.0
+                }
+            ],
+            "sta_assignments": [
+                {"sta_id": 0, "twt_group": 0},
+                {"sta_id": 1, "twt_group": 0},
+                {"sta_id": 2, "twt_group": 0},
+                {"sta_id": 3, "twt_group": 0},
+                {"sta_id": 4, "twt_group": 0},
+                {"sta_id": 5, "twt_group": 0},
+                {"sta_id": 6, "twt_group": 0},
+                {"sta_id": 7, "twt_group": 0},
+                {"sta_id": 8, "twt_group": 0},
+                {"sta_id": 9, "twt_group": 0},
+                {"sta_id": 10, "twt_group": 0},
+                {"sta_id": 11, "twt_group": 0},
+                {"sta_id": 12, "twt_group": 0},
+                {"sta_id": 13, "twt_group": 0},
+                {"sta_id": 14, "twt_group": 0},
+                {"sta_id": 15, "twt_group": 0}
+            ]
+        },
+        {
+            "name": "Config 2: 2 groups - 8 STAs each",
+            "num_active_twt_groups": 2,
+            "twt_groups": [
+                {
+                    "group_id": 0,
+                    "enabled": true,
+                    "wake_interval_ms": 102.4,
+                    "wake_duration_ms": 30.0,
+                    "sp_offset_ms": 0.0
+                },
+                {
+                    "group_id": 1,
+                    "enabled": true,
+                    "wake_interval_ms": 102.4,
+                    "wake_duration_ms": 50.0,
+                    "sp_offset_ms": 30.0
+                }
+            ],
+            "sta_assignments": [
+                {"sta_id": 0, "twt_group": 0},
+                {"sta_id": 1, "twt_group": 0},
+                {"sta_id": 2, "twt_group": 0},
+                {"sta_id": 3, "twt_group": 0},
+                {"sta_id": 4, "twt_group": 0},
+                {"sta_id": 5, "twt_group": 0},
+                {"sta_id": 6, "twt_group": 0},
+                {"sta_id": 7, "twt_group": 0},
+                {"sta_id": 8, "twt_group": 1},
+                {"sta_id": 9, "twt_group": 1},
+                {"sta_id": 10, "twt_group": 1},
+                {"sta_id": 11, "twt_group": 1},
+                {"sta_id": 12, "twt_group": 1},
+                {"sta_id": 13, "twt_group": 1},
+                {"sta_id": 14, "twt_group": 1},
+                {"sta_id": 15, "twt_group": 1}
+            ]
+        },
+        {
+            "name": "Config 3: 4 groups - 4 STAs each",
+            "num_active_twt_groups": 4,
+            "twt_groups": [
+                {"group_id": 0, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 0.0},
+                {"group_id": 1, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 20.0, "sp_offset_ms": 10.0},
+                {"group_id": 2, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 25.0, "sp_offset_ms": 30.0},
+                {"group_id": 3, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 35.0, "sp_offset_ms": 55.0}
+            ],
+            "sta_assignments": [
+                {"sta_id": 0, "twt_group": 0}, {"sta_id": 1, "twt_group": 0}, {"sta_id": 2, "twt_group": 0}, {"sta_id": 3, "twt_group": 0},
+                {"sta_id": 4, "twt_group": 1}, {"sta_id": 5, "twt_group": 1}, {"sta_id": 6, "twt_group": 1}, {"sta_id": 7, "twt_group": 1},
+                {"sta_id": 8, "twt_group": 2}, {"sta_id": 9, "twt_group": 2}, {"sta_id": 10, "twt_group": 2}, {"sta_id": 11, "twt_group": 2},
+                {"sta_id": 12, "twt_group": 3}, {"sta_id": 13, "twt_group": 3}, {"sta_id": 14, "twt_group": 3}, {"sta_id": 15, "twt_group": 3}
+            ]
+        },
+        {
+            "name": "Config 4: 2 groups - reversed (50ms vs 30ms)",
+            "num_active_twt_groups": 2,
+            "twt_groups": [
+                {"group_id": 0, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 50.0, "sp_offset_ms": 0.0},
+                {"group_id": 1, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 30.0, "sp_offset_ms": 50.0}
+            ],
+            "sta_assignments": [
+                {"sta_id": 0, "twt_group": 0}, {"sta_id": 1, "twt_group": 0}, {"sta_id": 2, "twt_group": 0}, {"sta_id": 3, "twt_group": 0},
+                {"sta_id": 4, "twt_group": 0}, {"sta_id": 5, "twt_group": 0}, {"sta_id": 6, "twt_group": 0}, {"sta_id": 7, "twt_group": 0},
+                {"sta_id": 8, "twt_group": 1}, {"sta_id": 9, "twt_group": 1}, {"sta_id": 10, "twt_group": 1}, {"sta_id": 11, "twt_group": 1},
+                {"sta_id": 12, "twt_group": 1}, {"sta_id": 13, "twt_group": 1}, {"sta_id": 14, "twt_group": 1}, {"sta_id": 15, "twt_group": 1}
+            ]
+        },
+        {
+            "name": "Config 5: 8 groups (2 STAs each, 10ms)",
+            "num_active_twt_groups": 8,
+            "twt_groups": [
+                {"group_id": 0, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 0.0},
+                {"group_id": 1, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 10.0},
+                {"group_id": 2, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 20.0},
+                {"group_id": 3, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 30.0},
+                {"group_id": 4, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 40.0},
+                {"group_id": 5, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 50.0},
+                {"group_id": 6, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 60.0},
+                {"group_id": 7, "enabled": true, "wake_interval_ms": 102.4, "wake_duration_ms": 10.0, "sp_offset_ms": 70.0}
+            ],
+            "sta_assignments": [
+                {"sta_id": 0, "twt_group": 0}, {"sta_id": 1, "twt_group": 0},
+                {"sta_id": 2, "twt_group": 1}, {"sta_id": 3, "twt_group": 1},
+                {"sta_id": 4, "twt_group": 2}, {"sta_id": 5, "twt_group": 2},
+                {"sta_id": 6, "twt_group": 3}, {"sta_id": 7, "twt_group": 3},
+                {"sta_id": 8, "twt_group": 4}, {"sta_id": 9, "twt_group": 4},
+                {"sta_id": 10, "twt_group": 5}, {"sta_id": 11, "twt_group": 5},
+                {"sta_id": 12, "twt_group": 6}, {"sta_id": 13, "twt_group": 6},
+                {"sta_id": 14, "twt_group": 7}, {"sta_id": 15, "twt_group": 7}
+            ]
+        }
+    ],
+    
+    "optimization_mode": 1,
+    "target_throughput_mbps": 50.0,
+    "target_energy_efficiency": 1.0,
+    "target_fairness": 0.9
+}

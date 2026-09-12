@@ -1,0 +1,8 @@
+{
+    "completed_spawns": 50,
+    "failed_spawns": 0,
+    "total_time_seconds": 1403,
+    "total_transitions": 1950,
+    "avg_time_per_spawn": 28.06,
+    "avg_transitions_per_spawn": 39.00
+}

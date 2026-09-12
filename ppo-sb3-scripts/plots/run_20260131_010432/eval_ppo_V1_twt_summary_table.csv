@@ -1,0 +1,16 @@
+Preset,Policy,Mean Reward,Std Reward,Throughput (MB),Energy (mJ),Queue (KB),Drops
+Energy,PPO,7.50,0.93,85.5,17745,20.2,2987
+Energy,Heuristic,-14.34,0.90,72.7,31769,25.7,11192
+Energy,Analytical,-14.34,0.89,72.7,31789,25.7,11170
+Energy,Random,-2.47,1.41,70.9,22450,26.4,12299
+,,,,,,,
+Throughput,PPO,4.02,1.01,88.5,22132,15.0,1528
+Throughput,Heuristic,2.36,0.76,90.4,30256,12.9,848
+Throughput,Analytical,-5.92,0.88,76.6,20983,19.1,9278
+Throughput,Random,-9.36,1.92,71.1,22751,26.2,12239
+,,,,,,,
+Queue,PPO,3.55,2.63,89.3,27832,14.1,1377
+Queue,Heuristic,4.10,0.94,90.2,27147,14.8,827
+Queue,Analytical,-5.02,4.30,82.3,32440,22.0,5365
+Queue,Random,-11.47,2.18,71.1,22618,26.6,12162
+,,,,,,,

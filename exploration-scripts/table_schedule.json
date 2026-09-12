@@ -1,0 +1,409 @@
+{
+  "description": "TWT Schedule Table (Dim-1) - Group configurations",
+  "generated": "20260810_180829",
+  "beacon_interval_ms": 102.4,
+  "max_total_duration_ms": 95.0,
+  "num_schedules": 20,
+  "schedules": [
+    {
+      "schedule_id": 0,
+      "name": "S0_G1_D90",
+      "description": "1 group, 90ms duration",
+      "num_groups": 1,
+      "total_duration_ms": 90,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 90.0,
+          "sp_offset_ms": 0.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 1,
+      "name": "S1_G1_D80",
+      "description": "1 group, 80ms duration",
+      "num_groups": 1,
+      "total_duration_ms": 80,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 80.0,
+          "sp_offset_ms": 0.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 2,
+      "name": "S2_G1_D60",
+      "description": "1 group, 60ms duration",
+      "num_groups": 1,
+      "total_duration_ms": 60,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 60.0,
+          "sp_offset_ms": 0.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 3,
+      "name": "S3_G1_D40",
+      "description": "1 group, 40ms duration",
+      "num_groups": 1,
+      "total_duration_ms": 40,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 40.0,
+          "sp_offset_ms": 0.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 4,
+      "name": "S4_G1_D20",
+      "description": "1 group, 20ms duration",
+      "num_groups": 1,
+      "total_duration_ms": 20,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 0.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 5,
+      "name": "S5_G2_D45x2",
+      "description": "2 groups, 45.0ms each, equal split",
+      "num_groups": 2,
+      "total_duration_ms": 90,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 45.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 45.0,
+          "sp_offset_ms": 47.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 6,
+      "name": "S6_G2_D40x2",
+      "description": "2 groups, 40.0ms each, equal split",
+      "num_groups": 2,
+      "total_duration_ms": 80,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 40.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 40.0,
+          "sp_offset_ms": 42.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 7,
+      "name": "S7_G2_D30x2",
+      "description": "2 groups, 30.0ms each, equal split",
+      "num_groups": 2,
+      "total_duration_ms": 60,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 32.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 8,
+      "name": "S8_G2_D20x2",
+      "description": "2 groups, 20.0ms each, equal split",
+      "num_groups": 2,
+      "total_duration_ms": 40,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 22.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 9,
+      "name": "S9_G2_D15x2",
+      "description": "2 groups, 15.0ms each, equal split",
+      "num_groups": 2,
+      "total_duration_ms": 30,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 15.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 15.0,
+          "sp_offset_ms": 17.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 10,
+      "name": "S10_G2_D60+20",
+      "description": "2 groups unequal: G0=60ms, G1=20ms",
+      "num_groups": 2,
+      "total_duration_ms": 80,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 60.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 62.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 11,
+      "name": "S11_G2_D50+30",
+      "description": "2 groups unequal: G0=50ms, G1=30ms",
+      "num_groups": 2,
+      "total_duration_ms": 80,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 50.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 52.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 12,
+      "name": "S12_G2_D40+20",
+      "description": "2 groups unequal: G0=40ms, G1=20ms",
+      "num_groups": 2,
+      "total_duration_ms": 60,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 40.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 42.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 13,
+      "name": "S13_G2_D30+15",
+      "description": "2 groups unequal: G0=30ms, G1=15ms",
+      "num_groups": 2,
+      "total_duration_ms": 45,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 15.0,
+          "sp_offset_ms": 32.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 14,
+      "name": "S14_G3_D30+30+25",
+      "description": "3 groups: 30+30+25ms",
+      "num_groups": 3,
+      "total_duration_ms": 85,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 32.0
+        },
+        {
+          "group_id": 2,
+          "wake_duration_ms": 25.0,
+          "sp_offset_ms": 64.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 15,
+      "name": "S15_G3_D40+25+20",
+      "description": "3 groups: 40+25+20ms",
+      "num_groups": 3,
+      "total_duration_ms": 85,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 40.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 25.0,
+          "sp_offset_ms": 42.0
+        },
+        {
+          "group_id": 2,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 69.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 16,
+      "name": "S16_G3_D25+25+25",
+      "description": "3 groups: 25+25+25ms",
+      "num_groups": 3,
+      "total_duration_ms": 75,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 25.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 25.0,
+          "sp_offset_ms": 27.0
+        },
+        {
+          "group_id": 2,
+          "wake_duration_ms": 25.0,
+          "sp_offset_ms": 54.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 17,
+      "name": "S17_G4",
+      "description": "4 groups: 22+22+22+22ms",
+      "num_groups": 4,
+      "total_duration_ms": 88,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 22.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 22.0,
+          "sp_offset_ms": 24.0
+        },
+        {
+          "group_id": 2,
+          "wake_duration_ms": 22.0,
+          "sp_offset_ms": 48.0
+        },
+        {
+          "group_id": 3,
+          "wake_duration_ms": 22.0,
+          "sp_offset_ms": 72.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 18,
+      "name": "S18_G4",
+      "description": "4 groups: 30+20+20+15ms",
+      "num_groups": 4,
+      "total_duration_ms": 85,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 30.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 32.0
+        },
+        {
+          "group_id": 2,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 54.0
+        },
+        {
+          "group_id": 3,
+          "wake_duration_ms": 15.0,
+          "sp_offset_ms": 76.0
+        }
+      ]
+    },
+    {
+      "schedule_id": 19,
+      "name": "S19_G4",
+      "description": "4 groups: 20+20+15+15ms",
+      "num_groups": 4,
+      "total_duration_ms": 70,
+      "groups": [
+        {
+          "group_id": 0,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 0.0
+        },
+        {
+          "group_id": 1,
+          "wake_duration_ms": 20.0,
+          "sp_offset_ms": 22.0
+        },
+        {
+          "group_id": 2,
+          "wake_duration_ms": 15.0,
+          "sp_offset_ms": 44.0
+        },
+        {
+          "group_id": 3,
+          "wake_duration_ms": 15.0,
+          "sp_offset_ms": 61.0
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,524 @@
+{
+  "summary": {
+    "total_metrics": 69,
+    "good": 28,
+    "ok": 0,
+    "limited": 19,
+    "constant": 0,
+    "sentinel": 0,
+    "garbage": 22
+  },
+  "recommended_features": {
+    "realistic": [
+      {
+        "name": "bsr_queue_ac_be",
+        "column": "realistic_bsr_queue_ac_be",
+        "unique_values": 110,
+        "zero_pct": 4.064102564102564,
+        "reason": "110 unique values, good variance"
+      },
+      {
+        "name": "rx_fragment_count",
+        "column": "realistic_rx_fragment_count",
+        "unique_values": 68,
+        "zero_pct": 39.9775641025641,
+        "reason": "68 unique values, good variance"
+      },
+      {
+        "name": "fcs_error_count",
+        "column": "realistic_fcs_error_count",
+        "unique_values": 333,
+        "zero_pct": 4.919871794871795,
+        "reason": "333 unique values, good variance"
+      },
+      {
+        "name": "last_rx_timestamp_us",
+        "column": "realistic_last_rx_timestamp_us",
+        "unique_values": 38,
+        "zero_pct": 2.564102564102564,
+        "reason": "38 unique values, good variance"
+      },
+      {
+        "name": "airtime_used_us",
+        "column": "realistic_airtime_used_us",
+        "unique_values": 24510,
+        "zero_pct": 3.881410256410257,
+        "reason": "24510 unique values, good variance"
+      },
+      {
+        "name": "observation_time_ms",
+        "column": "realistic_observation_time_ms",
+        "unique_values": 38,
+        "zero_pct": 2.564102564102564,
+        "reason": "38 unique values, good variance"
+      },
+      {
+        "name": "observation_sequence_num",
+        "column": "realistic_observation_sequence_num",
+        "unique_values": 38,
+        "zero_pct": 2.564102564102564,
+        "reason": "38 unique values, good variance"
+      }
+    ],
+    "oracle": [
+      {
+        "name": "tx_fragment_count",
+        "column": "oracle_tx_fragment_count",
+        "unique_values": 4988,
+        "zero_pct": 3.9134615384615388,
+        "reason": "4988 unique values, good variance"
+      },
+      {
+        "name": "tx_failed_count",
+        "column": "oracle_tx_failed_count",
+        "unique_values": 2759,
+        "zero_pct": 36.18589743589744,
+        "reason": "2759 unique values, good variance"
+      },
+      {
+        "name": "tx_retry_count",
+        "column": "oracle_tx_retry_count",
+        "unique_values": 125,
+        "zero_pct": 42.16666666666667,
+        "reason": "125 unique values, good variance"
+      },
+      {
+        "name": "ack_failure_count",
+        "column": "oracle_ack_failure_count",
+        "unique_values": 125,
+        "zero_pct": 42.16666666666667,
+        "reason": "125 unique values, good variance"
+      },
+      {
+        "name": "total_energy_consumed_mj",
+        "column": "oracle_total_energy_consumed_mj",
+        "unique_values": 29581,
+        "zero_pct": 2.564102564102564,
+        "reason": "29581 unique values, good variance"
+      },
+      {
+        "name": "current_times_time_ma_ms",
+        "column": "oracle_current_times_time_ma_ms",
+        "unique_values": 29582,
+        "zero_pct": 2.564102564102564,
+        "reason": "29582 unique values, good variance"
+      },
+      {
+        "name": "awake_time_ms",
+        "column": "oracle_awake_time_ms",
+        "unique_values": 5168,
+        "zero_pct": 2.564102564102564,
+        "reason": "5168 unique values, good variance"
+      },
+      {
+        "name": "sleep_time_ms",
+        "column": "oracle_sleep_time_ms",
+        "unique_values": 11960,
+        "zero_pct": 2.564102564102564,
+        "reason": "11960 unique values, good variance"
+      },
+      {
+        "name": "duty_cycle",
+        "column": "oracle_duty_cycle",
+        "unique_values": 29361,
+        "zero_pct": 2.564102564102564,
+        "reason": "29361 unique values, good variance"
+      },
+      {
+        "name": "packets_enqueued",
+        "column": "oracle_packets_enqueued",
+        "unique_values": 7724,
+        "zero_pct": 3.176282051282051,
+        "reason": "7724 unique values, good variance"
+      },
+      {
+        "name": "mpdu_drops_expired",
+        "column": "oracle_mpdu_drops_expired",
+        "unique_values": 2735,
+        "zero_pct": 36.18589743589744,
+        "reason": "2735 unique values, good variance"
+      },
+      {
+        "name": "psdu_response_timeouts",
+        "column": "oracle_psdu_response_timeouts",
+        "unique_values": 125,
+        "zero_pct": 42.16666666666667,
+        "reason": "125 unique values, good variance"
+      },
+      {
+        "name": "packets_transmitted",
+        "column": "oracle_packets_transmitted",
+        "unique_values": 6933,
+        "zero_pct": 2.564102564102564,
+        "reason": "6933 unique values, good variance"
+      },
+      {
+        "name": "bytes_transmitted",
+        "column": "oracle_bytes_transmitted",
+        "unique_values": 25451,
+        "zero_pct": 2.564102564102564,
+        "reason": "25451 unique values, good variance"
+      },
+      {
+        "name": "ampdu_count",
+        "column": "oracle_ampdu_count",
+        "unique_values": 790,
+        "zero_pct": 3.881410256410257,
+        "reason": "790 unique values, good variance"
+      },
+      {
+        "name": "ampdu_mpdus_total",
+        "column": "oracle_ampdu_mpdus_total",
+        "unique_values": 5391,
+        "zero_pct": 3.881410256410257,
+        "reason": "5391 unique values, good variance"
+      },
+      {
+        "name": "ampdu_bytes_total",
+        "column": "oracle_ampdu_bytes_total",
+        "unique_values": 25151,
+        "zero_pct": 3.881410256410257,
+        "reason": "25151 unique values, good variance"
+      },
+      {
+        "name": "queue_size_packets",
+        "column": "oracle_queue_size_packets",
+        "unique_values": 46,
+        "zero_pct": 29.759615384615383,
+        "reason": "46 unique values, good variance"
+      },
+      {
+        "name": "queue_size_bytes",
+        "column": "oracle_queue_size_bytes",
+        "unique_values": 110,
+        "zero_pct": 4.064102564102564,
+        "reason": "110 unique values, good variance"
+      },
+      {
+        "name": "position_x_m",
+        "column": "oracle_position_x_m",
+        "unique_values": 801,
+        "zero_pct": 2.564102564102564,
+        "reason": "801 unique values, good variance"
+      },
+      {
+        "name": "position_y_m",
+        "column": "oracle_position_y_m",
+        "unique_values": 801,
+        "zero_pct": 2.564102564102564,
+        "reason": "801 unique values, good variance"
+      }
+    ]
+  },
+  "limited_features": [
+    {
+      "name": "is_active",
+      "column": "realistic_is_active",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 2 values: [0, 1]"
+    },
+    {
+      "name": "bsr_scaling_factor",
+      "column": "realistic_bsr_scaling_factor",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 2 values: [0, 256]"
+    },
+    {
+      "name": "rcpi",
+      "column": "realistic_rcpi",
+      "category": "REALISTIC",
+      "unique_values": 3,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 3 unique values"
+    },
+    {
+      "name": "rsni",
+      "column": "realistic_rsni",
+      "category": "REALISTIC",
+      "unique_values": 3,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 3 unique values"
+    },
+    {
+      "name": "rssi_dbm",
+      "column": "realistic_rssi_dbm",
+      "category": "REALISTIC",
+      "unique_values": 3,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 3 unique values"
+    },
+    {
+      "name": "snr_db",
+      "column": "realistic_snr_db",
+      "category": "REALISTIC",
+      "unique_values": 3,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 3 unique values"
+    },
+    {
+      "name": "link_margin_db",
+      "column": "realistic_link_margin_db",
+      "category": "REALISTIC",
+      "unique_values": 3,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 3 unique values"
+    },
+    {
+      "name": "tx_power_dbm",
+      "column": "realistic_tx_power_dbm",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 3.881410256410257,
+      "reason": "Only 2 values: [0, 16]"
+    },
+    {
+      "name": "last_rx_frame_type",
+      "column": "realistic_last_rx_frame_type",
+      "category": "REALISTIC",
+      "unique_values": 3,
+      "zero_pct": 39.9775641025641,
+      "reason": "Only 3 unique values"
+    },
+    {
+      "name": "last_rx_mcs",
+      "column": "realistic_last_rx_mcs",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 28.80128205128205,
+      "reason": "Only 2 values: [0, 4]"
+    },
+    {
+      "name": "last_rx_nss",
+      "column": "realistic_last_rx_nss",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 3.881410256410257,
+      "reason": "Only 2 values: [0, 1]"
+    },
+    {
+      "name": "channel_width_mhz",
+      "column": "realistic_channel_width_mhz",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 3.881410256410257,
+      "reason": "Only 2 values: [0, 20]"
+    },
+    {
+      "name": "guard_interval_ns",
+      "column": "realistic_guard_interval_ns",
+      "category": "REALISTIC",
+      "unique_values": 2,
+      "zero_pct": 3.881410256410257,
+      "reason": "Only 2 values: [0, 800]"
+    },
+    {
+      "name": "device_class",
+      "column": "realistic_device_class",
+      "category": "REALISTIC",
+      "unique_values": 4,
+      "zero_pct": 20.833333333333336,
+      "reason": "Only 4 unique values"
+    },
+    {
+      "name": "nominal_msdu_size",
+      "column": "realistic_nominal_msdu_size",
+      "category": "REALISTIC",
+      "unique_values": 5,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 5 unique values"
+    },
+    {
+      "name": "mean_data_rate_kbps",
+      "column": "realistic_mean_data_rate_kbps",
+      "category": "REALISTIC",
+      "unique_values": 5,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 5 unique values"
+    },
+    {
+      "name": "delay_bound_ms",
+      "column": "realistic_delay_bound_ms",
+      "category": "REALISTIC",
+      "unique_values": 5,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 5 unique values"
+    },
+    {
+      "name": "user_priority",
+      "column": "realistic_user_priority",
+      "category": "REALISTIC",
+      "unique_values": 4,
+      "zero_pct": 20.833333333333336,
+      "reason": "Only 4 unique values"
+    },
+    {
+      "name": "queue_max_size",
+      "column": "oracle_queue_max_size",
+      "category": "ORACLE",
+      "unique_values": 2,
+      "zero_pct": 2.564102564102564,
+      "reason": "Only 2 values: [0, 46]"
+    }
+  ],
+  "garbage_features": [
+    {
+      "name": "bsr_queue_ac_bk",
+      "column": "realistic_bsr_queue_ac_bk",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bsr_queue_ac_vi",
+      "column": "realistic_bsr_queue_ac_vi",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bsr_queue_ac_vo",
+      "column": "realistic_bsr_queue_ac_vo",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "last_rx_frame_subtype",
+      "column": "realistic_last_rx_frame_subtype",
+      "category": "REALISTIC",
+      "zero_pct": 98.28525641025641,
+      "reason": "98.3% zeros"
+    },
+    {
+      "name": "power_mgmt_bit",
+      "column": "realistic_power_mgmt_bit",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bytes_received_at_ap",
+      "column": "realistic_bytes_received_at_ap",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "packets_received_at_ap",
+      "column": "realistic_packets_received_at_ap",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bytes_received_ac_vo",
+      "column": "realistic_bytes_received_ac_vo",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bytes_received_ac_vi",
+      "column": "realistic_bytes_received_ac_vi",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bytes_received_ac_be",
+      "column": "realistic_bytes_received_ac_be",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bytes_received_ac_bk",
+      "column": "realistic_bytes_received_ac_bk",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "packets_received_ac_vo",
+      "column": "realistic_packets_received_ac_vo",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "packets_received_ac_vi",
+      "column": "realistic_packets_received_ac_vi",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "packets_received_ac_be",
+      "column": "realistic_packets_received_ac_be",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "packets_received_ac_bk",
+      "column": "realistic_packets_received_ac_bk",
+      "category": "REALISTIC",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "packets_generated",
+      "column": "oracle_packets_generated",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "bytes_generated",
+      "column": "oracle_bytes_generated",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "mpdu_drops_queue_full",
+      "column": "oracle_mpdu_drops_queue_full",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "avg_latency_ms",
+      "column": "oracle_avg_latency_ms",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "queue_delay_sum_ms",
+      "column": "oracle_queue_delay_sum_ms",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "queue_delay_count",
+      "column": "oracle_queue_delay_count",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    },
+    {
+      "name": "position_z_m",
+      "column": "oracle_position_z_m",
+      "category": "ORACLE",
+      "zero_pct": 100.0,
+      "reason": "Always zero"
+    }
+  ],
+  "sentinel_features": []
+}

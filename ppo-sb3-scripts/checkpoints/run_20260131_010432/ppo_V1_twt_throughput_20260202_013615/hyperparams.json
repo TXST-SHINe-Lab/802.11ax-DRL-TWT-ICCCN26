@@ -1,0 +1,36 @@
+{
+  "timestamp": "20260202_013615",
+  "total_timesteps": 15000,
+  "seed": 1,
+  "reward_type": "per_sta",
+  "reward_preset": "throughput",
+  "reward_scale": 1.0,
+  "learning_rate": 0.0003,
+  "n_steps": 256,
+  "batch_size": 64,
+  "n_epochs": 10,
+  "gamma": 0.99,
+  "gae_lambda": 0.95,
+  "clip_range": 0.2,
+  "ent_coef": 0.01,
+  "vf_coef": 0.5,
+  "max_grad_norm": 0.5,
+  "net_arch_pi": [
+    256,
+    256
+  ],
+  "net_arch_vf": [
+    256,
+    256
+  ],
+  "use_custom_extractor": true,
+  "features_dim": 256,
+  "activation_fn": "GELU",
+  "ortho_init": true,
+  "normalize_obs": true,
+  "normalize_reward": true,
+  "clip_obs": 10.0,
+  "clip_reward": 10.0,
+  "action_space": "MultiDiscrete([20 19])",
+  "observation_space": "Box(-inf, inf, (208,), float32)"
+}

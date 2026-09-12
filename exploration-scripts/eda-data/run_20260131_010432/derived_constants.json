@@ -1,0 +1,91 @@
+{
+  "NORM": {
+    "delta_bytes_transmitted": {
+      "mean": 98306.0,
+      "std": 34883.0,
+      "max": 143865.0
+    },
+    "delta_packets_transmitted": {
+      "mean": 78.9,
+      "std": 26.9,
+      "max": 120.9
+    },
+    "delta_airtime_used_us": {
+      "mean": 15999.0,
+      "std": 5650.0,
+      "max": 23100.0
+    },
+    "queue_size_bytes": {
+      "mean": 23470.0,
+      "std": 5916.0,
+      "max": 38944.0
+    },
+    "queue_size_packets": {
+      "mean": 16.3,
+      "std": 4.2,
+      "max": 27.4
+    },
+    "bsr_queue_index": {
+      "mean": 91.7,
+      "std": 23.1,
+      "max": 152.1
+    },
+    "delta_packets_enqueued": {
+      "mean": 85.0,
+      "std": 29.0,
+      "max": 130.0
+    },
+    "delta_energy_mj": {
+      "mean": 35.5,
+      "std": 16.7,
+      "max": 80.9
+    },
+    "delta_awake_time_ms": {
+      "mean": 64.5,
+      "std": 38.2,
+      "max": 175.4
+    },
+    "delta_sleep_time_ms": {
+      "mean": 211.5,
+      "std": 107.0,
+      "max": 423.8
+    },
+    "duty_cycle": {
+      "mean": 0.3,
+      "std": 0.06,
+      "max": 0.6
+    },
+    "delta_drops_expired": {
+      "mean": 13.1,
+      "std": 13.5,
+      "max": 78.7
+    },
+    "fcs_error_count": {
+      "mean": 114.0,
+      "std": 55.4,
+      "max": 315.8
+    },
+    "rx_fragment_count": {
+      "mean": 9.9,
+      "std": 4.8,
+      "max": 26.9
+    },
+    "last_rx_timestamp_us": {
+      "mean": 18694564.0,
+      "std": 6298365.0,
+      "max": 28160000.0
+    }
+  },
+  "_report_only": {
+    "sleep_ratio_mean": 0.7,
+    "arrival_rate_mean": 85.0,
+    "arrival_rate_per_bi_mean": 4.25,
+    "service_rate_mean": 1.2232558139534884,
+    "jain_bytes_mean": 0.7,
+    "jain_bytes_std": 0.1,
+    "jain_sleep_ratio_mean": 0.8,
+    "jain_sleep_ratio_std": 0.1
+  },
+  "_source": "eda-data/run_20260131_010432",
+  "_generated": "2026-09-12T07:33:08+00:00"
+}

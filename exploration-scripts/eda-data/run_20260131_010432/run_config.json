@@ -1,0 +1,10 @@
+{
+    "timestamp": "20260131_010432",
+    "num_spawns": 50,
+    "num_stas": 16,
+    "steps_per_spawn": 200,
+    "base_seed": 42,
+    "config_file": "",
+    "schedule_table": "/home/mak/NS3-project/ns-allinone-3.44/ns-3.44/contrib/ai/examples/MobiCom/twt/exploration-scripts/schedule_table.json",
+    "assignment_table": "/home/mak/NS3-project/ns-allinone-3.44/ns-3.44/contrib/ai/examples/MobiCom/twt/exploration-scripts/assignment_table.json"
+}

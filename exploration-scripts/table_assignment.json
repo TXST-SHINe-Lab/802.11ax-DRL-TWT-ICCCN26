@@ -1,0 +1,178 @@
+{
+  "description": "TWT Assignment Table (Dim-2) - STA-to-group patterns (STA-agnostic)",
+  "generated": "20260810_180829",
+  "num_assignments": 19,
+  "assignments": [
+    {
+      "assignment_id": 0,
+      "name": "A0_all_to_G0",
+      "description": "All STAs assigned to group 0",
+      "pattern_type": "all_to_one",
+      "target_group": 0,
+      "max_groups_needed": 1
+    },
+    {
+      "assignment_id": 1,
+      "name": "A1_all_to_G1",
+      "description": "All STAs assigned to group 1",
+      "pattern_type": "all_to_one",
+      "target_group": 1,
+      "max_groups_needed": 1
+    },
+    {
+      "assignment_id": 2,
+      "name": "A2_all_to_G2",
+      "description": "All STAs assigned to group 2",
+      "pattern_type": "all_to_one",
+      "target_group": 2,
+      "max_groups_needed": 1
+    },
+    {
+      "assignment_id": 3,
+      "name": "A3_all_to_G3",
+      "description": "All STAs assigned to group 3",
+      "pattern_type": "all_to_one",
+      "target_group": 3,
+      "max_groups_needed": 1
+    },
+    {
+      "assignment_id": 4,
+      "name": "A4_roundrobin_G2",
+      "description": "Round-robin across 2 groups",
+      "pattern_type": "round_robin",
+      "num_groups": 2,
+      "max_groups_needed": 2
+    },
+    {
+      "assignment_id": 5,
+      "name": "A5_roundrobin_G3",
+      "description": "Round-robin across 3 groups",
+      "pattern_type": "round_robin",
+      "num_groups": 3,
+      "max_groups_needed": 3
+    },
+    {
+      "assignment_id": 6,
+      "name": "A6_roundrobin_G4",
+      "description": "Round-robin across 4 groups",
+      "pattern_type": "round_robin",
+      "num_groups": 4,
+      "max_groups_needed": 4
+    },
+    {
+      "assignment_id": 7,
+      "name": "A7_split_half_ordered",
+      "description": "First half to G0, second half to G1",
+      "pattern_type": "split_half",
+      "ordering": "sequential",
+      "max_groups_needed": 2
+    },
+    {
+      "assignment_id": 8,
+      "name": "A8_split_half_evenodd",
+      "description": "Even STA IDs to G0, odd to G1",
+      "pattern_type": "split_half",
+      "ordering": "even_odd",
+      "max_groups_needed": 2
+    },
+    {
+      "assignment_id": 9,
+      "name": "A9_split_thirds",
+      "description": "Split STAs into 3 equal groups sequentially",
+      "pattern_type": "split_n",
+      "num_groups": 3,
+      "ordering": "sequential",
+      "max_groups_needed": 3
+    },
+    {
+      "assignment_id": 10,
+      "name": "A10_modulo_3",
+      "description": "STA_id mod 3 determines group",
+      "pattern_type": "modulo",
+      "num_groups": 3,
+      "max_groups_needed": 3
+    },
+    {
+      "assignment_id": 11,
+      "name": "A11_split_quarters",
+      "description": "Split STAs into 4 equal groups sequentially",
+      "pattern_type": "split_n",
+      "num_groups": 4,
+      "ordering": "sequential",
+      "max_groups_needed": 4
+    },
+    {
+      "assignment_id": 12,
+      "name": "A12_modulo_4",
+      "description": "STA_id mod 4 determines group",
+      "pattern_type": "modulo",
+      "num_groups": 4,
+      "max_groups_needed": 4
+    },
+    {
+      "assignment_id": 13,
+      "name": "A13_weighted_G2",
+      "description": "Weighted: [75, 25]% distribution",
+      "pattern_type": "weighted",
+      "ratios": [
+        0.75,
+        0.25
+      ],
+      "max_groups_needed": 2
+    },
+    {
+      "assignment_id": 14,
+      "name": "A14_weighted_G2",
+      "description": "Weighted: [60, 40]% distribution",
+      "pattern_type": "weighted",
+      "ratios": [
+        0.6,
+        0.4
+      ],
+      "max_groups_needed": 2
+    },
+    {
+      "assignment_id": 15,
+      "name": "A15_weighted_G3",
+      "description": "Weighted: [50, 30, 20]% distribution",
+      "pattern_type": "weighted",
+      "ratios": [
+        0.5,
+        0.3,
+        0.2
+      ],
+      "max_groups_needed": 3
+    },
+    {
+      "assignment_id": 16,
+      "name": "A16_weighted_G4",
+      "description": "Weighted: [40, 30, 20, 10]% distribution",
+      "pattern_type": "weighted",
+      "ratios": [
+        0.4,
+        0.3,
+        0.2,
+        0.1
+      ],
+      "max_groups_needed": 4
+    },
+    {
+      "assignment_id": 17,
+      "name": "A17_interleave_2",
+      "description": "Interleave: 0,2,4,6->G0; 1,3,5,7->G1 pattern",
+      "pattern_type": "interleave",
+      "step": 2,
+      "num_groups": 2,
+      "max_groups_needed": 2
+    },
+    {
+      "assignment_id": 18,
+      "name": "A18_interleave_4",
+      "description": "Interleave with step 4 across 2 groups",
+      "pattern_type": "interleave",
+      "step": 4,
+      "num_groups": 2,
+      "max_groups_needed": 2
+    }
+  ]
+}

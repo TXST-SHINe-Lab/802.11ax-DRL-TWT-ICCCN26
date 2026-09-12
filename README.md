@@ -5,10 +5,19 @@
   <img src="https://img.shields.io/badge/Python-3.11-green" alt="Python Version">
   <img src="https://img.shields.io/badge/WiFi-802.11ax-orange" alt="WiFi Standard">
   <img src="https://img.shields.io/badge/RL-PPO-red" alt="RL Algorithm">
+  <a href="https://ieeexplore.ieee.org/document/11662818"><img src="https://img.shields.io/badge/Paper-IEEE%20ICCCN%202026-00629B" alt="IEEE ICCCN 2026 Paper"></a>
 </p>
 
 A reinforcement learning framework for **Target Wake Time (TWT)** scheduling in IEEE 802.11ax (WiFi 6) networks.
 This project integrates NS-3 network simulation with Stable-Baselines3 PPO to learn optimal power-saving schedules for heterogeneous IoT networks.
+
+Code for the paper:
+
+> **A. Maksud and M. M. Carvalho**, "Deep Reinforcement Learning-based Dynamic TWT Scheduling for Heterogeneous Wi-Fi Networks,"
+> in *Proc. 35th International Conference on Computer Communications and Networks (ICCCN)*, Honolulu, HI, USA, Jul. 2026, pp. 1–9.
+> [[IEEE Xplore](https://ieeexplore.ieee.org/document/11662818), [doi:10.1109/ICCCN69946.2026.11662818](https://doi.org/10.1109/ICCCN69946.2026.11662818)]
+
+If you use this code, please cite the paper (see [Citation](#11-citation)).
 
 **Author**: Ahmed Maksud — SHINE Lab, Texas State University
 **PI**: Prof. Marcelo Menezes De Carvalho
@@ -89,6 +98,7 @@ cd ..
     - [Key Configuration Points](#key-configuration-points)
     - [Build & Run](#build--run)
     - [License](#license)
+  - [11. Citation](#11-citation)
 
 ---
 
@@ -859,3 +869,22 @@ GNU General Public License v2 — see individual source files.
 
 **Author**: Ahmed Maksud — [ahmed.maksud@email.ucr.edu](mailto:ahmed.maksud@email.ucr.edu)\
 **PI**: Marcelo Menezes De Carvalho — SHINE Lab, Texas State University
+
+---
+
+## 11. Citation
+
+If you use this code in your research, please cite:
+
+```bibtex
+@INPROCEEDINGS{11662818,
+  author={Maksud, Ahmed and Carvalho, Marcelo M.},
+  booktitle={2026 35th International Conference on Computer Communications and Networks (ICCCN)}, 
+  title={Deep Reinforcement Learning-based Dynamic TWT Scheduling for Heterogeneous Wi-Fi Networks}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={1-9},
+  keywords={Schedules;Scheduling;Energy;Training;Long short term memory;Information rates;Modeling;Optimization;Throughput;Timing;Target Wake Time;IEEE 802.11ax;Deep Reinforcement Learning;Proximal Policy Optimization;Wi-Fi Power Management;IoT Networks},
+  doi={10.1109/ICCCN69946.2026.11662818}}
+```

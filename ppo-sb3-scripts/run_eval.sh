@@ -27,8 +27,8 @@ cd "$SCRIPT_DIR"
 # --- Configuration, edit these to customise evaluation ---
 N_EPISODES=50
 SEED=1000000000         # Fixed for reproducibility, well clear of the training seed
-INCLUDE_RANDOM=false    # Random baseline, off by default
-INCLUDE_HEURISTIC=false # Preset-matched heuristic policies, off by default
+INCLUDE_RANDOM=true     # Random baseline, off by default
+INCLUDE_HEURISTIC=true  # Preset-matched heuristic policies, off by default
 INCLUDE_ANALYTICAL=true # Analytical model-based policies
 CLEAN_OLD=false         # true wipes this run's eval_results/ before running
 

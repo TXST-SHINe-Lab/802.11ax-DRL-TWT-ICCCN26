@@ -2,10 +2,10 @@
 
 This directory contains **smoke-test scripts** that verify the full NS-3 TWT simulation
 pipeline before any RL training or EDA data collection. Run these scripts first whenever
-the C++ code changes, the protobuf interface is updated, or a new machine is set up.
+the C++ code changes, the pybind11 interface is updated, or a new machine is set up.
 
 The scripts should run before the EDA in `exploration-scripts/` and the
-PPO training in `ppo-sb3-scripts/` . They answer a single question: *is the simulation
+PPO training in `ppo-sb3-scripts/`. They answer a single question: *is the simulation
 producing correct, internally-consistent logs?*
 
 ---
@@ -109,7 +109,7 @@ terminates cleanly.
 1. Calls `wrapper.close()` and prints a completion banner with the location of the
    log files.
 
-**Outputs** (written by NS-3 and the Python wrapper to `../data-log/` )
+**Outputs** (written by NS-3 and the Python wrapper to `../data-log/`)
 
 | File pattern                       | Writer | Contents                                                |
 | ---------------------------------- | ------ | ------------------------------------------------------- |
@@ -138,11 +138,11 @@ python simple-controller.py --config simple-config.json --seed 42
 ### `summary-metrics.py`
 
 **Purpose**: Print a comprehensive human-readable report covering every log type.
-Use this as a first-pass sanity check after running `simple-controller.py` .
+Use this as a first-pass sanity check after running `simple-controller.py`.
 
 **Arguments**: None (no CLI flags).
 
-**Reads** (latest file of each pattern in `../data-log/` ): all 13 log types listed above.
+**Reads** (latest file of each pattern in `../data-log/`): all 13 log types listed above.
 
 **Report sections**
 
@@ -166,7 +166,7 @@ python summary-metrics.py
 
 ### `plot-bi-metrics.py`
 
-**Purpose**: Visualise per-BI metrics for every STA as matplotlib figures, with
+**Purpose**: Visualize per-BI metrics for every STA as matplotlib figures, with
 call-level overlays and vertical markers at each TWT config-update point.
 
 **Arguments**
@@ -186,13 +186,13 @@ call-level overlays and vertical markers at each TWT config-update point.
 | `ns3-BI-log-*.csv`      | Primary BI-level data                                                                         |
 | `ns3-call-log-*.csv`    | Call-level overlay (window averages / snapshots)                                              |
 | `ns3-twt-wrapper-*.csv` | Config-update BI indices for vertical markers                                                 |
-| `../../twt-constants.h` | Parsed at runtime for `BEACON_INTERVAL_MS` , `TWT_UPDATE_INTERVAL_BI` , `TWT_UPDATE_START_BI` |
+| `../../twt-constants.h` | Parsed at runtime for `BEACON_INTERVAL_MS`, `TWT_UPDATE_INTERVAL_BI`, `TWT_UPDATE_START_BI` |
 
 **Important**: All `oracle_*` columns in `ns3-BI-log-*.csv` are **cumulative**.
 The script computes `.diff()` per STA before plotting so every y-axis shows a
 per-BI delta.
 
-**Per-STA figure** (2 × 2 panel, saved as `sta{N}_metrics_*.png` )
+**Per-STA figure** (2 × 2 panel, saved as `sta{N}_metrics_*.png`)
 
 | Panel        | Metric                       | Overlay                     |
 | ------------ | ---------------------------- | --------------------------- |
@@ -204,7 +204,7 @@ per-BI delta.
 Red dashed vertical lines mark each TWT config-update BI; a per-STA summary
 banner is appended below the 2 × 2 grid.
 
-**Network overview figure** (saved as `network_overview_*.png` )
+**Network overview figure** (saved as `network_overview_*.png`)
 
 | Panel        | Content                                     |
 | ------------ | ------------------------------------------- |
@@ -226,10 +226,10 @@ python plot-bi-metrics.py --no-save --show
 ### `verify-ns3-to-python.py`
 
 **Purpose**: Confirm that NS-3's internal call-level log matches the state actually
-received by the Python controller via the protobuf bridge. Catches serialisation
+received by the Python controller via the ns3-ai shared-memory bridge. Catches serialization
 bugs, field mapping errors, and off-by-one alignment issues.
 
-**Arguments**: None (processes every timestamp group found in `../data-log/` ).
+**Arguments**: None (processes every timestamp group found in `../data-log/`).
 
 **Reads** (per timestamp group)
 
@@ -274,7 +274,7 @@ python verify-ns3-to-python.py
 1. **E2E vs BI**: PHY_TX events in the E2E trace must match `total_packets_transmitted`
    delta in the BI log.
 
-**Arguments**: None (processes every complete timestamp group in `../data-log/` ).
+**Arguments**: None (processes every complete timestamp group in `../data-log/`).
 
 **Reads** (per timestamp group)
 
@@ -288,7 +288,6 @@ python verify-ns3-to-python.py
 in the C++ code. The script computes per-interval deltas before comparing.
 
 **Side-effect output**: `aggregated_from_bi_<timestamp>.csv` written to `../data-log/`
-
 for manual inspection.
 
 **Result table** (printed to stdout):
@@ -343,7 +342,6 @@ by matching timestamp suffixes.
 
 - **Cumulative oracle columns**: All `oracle_*` fields in `ns3-BI-log-*.csv` are running
   totals — not per-BI values. Both `plot-bi-metrics.py` and `verify-call-level-metrics.py`
-
   compute `.diff()` per STA before any analysis.
 
 - **INT8_MIN sentinel** (`-128`): Link quality columns (RSSI, SNR, link margin)
@@ -352,11 +350,11 @@ by matching timestamp suffixes.
 
 - **`twt-constants.h` auto-parsed**: `plot-bi-metrics.py` reads
   `../../twt-constants.h` at runtime with a regex to extract
-  `BEACON_INTERVAL_MS` , `TWT_UPDATE_INTERVAL_BI` , and `TWT_UPDATE_START_BI` .
+  `BEACON_INTERVAL_MS`, `TWT_UPDATE_INTERVAL_BI`, and `TWT_UPDATE_START_BI`.
   If the header file moves, update the `parse_twt_constants()` search path.
 
 - **First call baseline**: The first call period is a snapshot with no prior state;
-  call-level data is only logged from the *second* call onward ( `call_index ≥ 1` ).
+  call-level data is only logged from the *second* call onward (`call_index ≥ 1`).
   `verify-call-level-metrics.py` accounts for this offset.
 
 - **Running order**: These scripts are read-only after `simple-controller.py` finishes.

@@ -6,7 +6,7 @@
 # Author: Ahmed Maksud <ahmed.maksud@email.ucr.edu>
 # PI: Marcelo Menezes De Carvalho <mmcarvalho@txstate.edu>
 
-"""plot_training.py - generate training visualisations for TWT PPO.
+"""plot_training.py - generate training visualizations for TWT PPO.
 
 Plots training curves for every preset from the JSONL logs written by EpisodeLoggerCallback.
 Which checkpoints are read depends on --training-script, since the pattern is derived from its name.

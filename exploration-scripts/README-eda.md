@@ -3,7 +3,7 @@
 This directory contains scripts for **Exploratory Data Analysis (EDA)** and offline data
 collection for the TWT (Target Wake Time) scheduling RL environment. Running thousands of
 random-action simulations here provides the dataset used to study the action space, validate
-metric flows, and calibrate reward normalisation constants before training.
+metric flows, and calibrate reward normalization constants before training.
 
 ## Overview
 
@@ -39,15 +39,15 @@ python generate_action_tables.py --output-dir .
 
 #### `table_schedule.json`
 
-Pre-generated schedule table. Each entry specifies `num_groups` , per-group
-`wake_duration_ms` , and `sp_offset_ms` . Loaded by `run-single-spawn.py` ,
-`episode_file_runner.py` (PPO pipeline), and `reward_functions.py` .
+Pre-generated schedule table. Each entry specifies `num_groups`, per-group
+`wake_duration_ms`, and `sp_offset_ms`. Loaded by `run-single-spawn.py`,
+`episode_file_runner.py` (PPO pipeline), and `reward_functions.py`.
 
 #### `table_assignment.json`
 
 Pre-generated assignment table. Each entry specifies a `pattern_type` and the
 parameters needed to map N STAs onto the active groups at runtime. Loaded by
-the same scripts as `table_schedule.json` .
+the same scripts as `table_schedule.json`.
 
 ---
 
@@ -56,31 +56,31 @@ the same scripts as `table_schedule.json` .
 #### `run-single-spawn.py`
 
 Runs **one** NS-3 simulation with random actions and writes all transitions to a
-JSONL file. Called in parallel by `1-collect-data.sh` .
+JSONL file. Called sequentially by `1-collect-data.sh`.
 
 - Loads `table_schedule.json` / `table_assignment.json`
 
 - Calls `TWTWrapper.reset()` then loops `TWTWrapper.step()` until `done=True`
-  (38 steps per episode as set by `DURATION_IN_UPDATE` in `twt-constants.h` )
+  (38 steps per episode as set by `DURATION_IN_UPDATE` in `twt-constants.h`)
 
 - At each step, extracts **per-STA state** via `extract_state_per_sta(env_dict)`:
 
   | Feature group            | Fields                                                                        |
   | ------------------------ | ----------------------------------------------------------------------------- |
   | BSR / queue (realistic)  | `bsr_queue_ac_be/bk/vi/vo`                                                    |
-  | Link quality (realistic) | `rssi_dbm` , `snr_db` , `last_rx_mcs`                                         |
-  | AP traffic (realistic)   | `bytes_received_at_ap` , `packets_received_at_ap`                             |
-  | Energy (oracle)          | `oracle_total_energy_mj` , `oracle_duty_cycle` , `oracle_awake/sleep_time_ms` |
-  | Packets (oracle)         | `oracle_packets_generated/transmitted` , `oracle_bytes_transmitted`           |
+  | Link quality (realistic) | `rssi_dbm`, `snr_db`, `last_rx_mcs`                                         |
+  | AP traffic (realistic)   | `bytes_received_at_ap`, `packets_received_at_ap`                             |
+  | Energy (oracle)          | `oracle_total_energy_mj`, `oracle_duty_cycle`, `oracle_awake/sleep_time_ms` |
+  | Packets (oracle)         | `oracle_packets_generated/transmitted`, `oracle_bytes_transmitted`           |
   | Drops (oracle)           | `oracle_mpdu_drops_expired/queue_full`                                        |
-  | Queue (oracle)           | `oracle_queue_size_packets/bytes` , `oracle_avg_latency_ms`                   |
+  | Queue (oracle)           | `oracle_queue_size_packets/bytes`, `oracle_avg_latency_ms`                   |
 
 - First line of the JSONL is a `_metadata` record (seed, log timestamps, NS-3 CSV paths)
 
 - Subsequent lines are transition dicts with keys
-  `spawn_id` , `step` , `sim_time_sec` , `num_sta` , `action` ([schedule_idx, assignment_idx]),
-  `schedule_name` , `assignment_name` , `state` , `next_state` , `done` , plus
-  aggregate convenience fields ( `agg_total_bytes_tx` , `agg_total_energy_mj` , etc.)
+  `spawn_id`, `step`, `sim_time_sec`, `num_sta`, `action` ([schedule_idx, assignment_idx]),
+  `schedule_name`, `assignment_name`, `state`, `next_state`, `done`, plus
+  aggregate convenience fields (`agg_total_bytes_tx`, `agg_total_energy_mj`, etc.)
 
 ```bash
 python run-single-spawn.py --seed 1000 --spawn-id 0 \
@@ -129,13 +129,13 @@ array file for fast loading during EDA and training.
 
 - Per-STA feature order (27 fields × 16 STAs = 432-dim state vector), matching
   `per_sta_feature_names` in `stack-data.py`:
-  `bsr_queue_ac_be/bk/vi/vo` , `rssi_dbm` , `snr_db` , `last_rx_mcs` ,
-  `bytes/packets_received_at_ap` , `airtime_used_us` , `fcs_error_count` ,
-  `rx_fragment_count` , `last_rx_timestamp_us` , `oracle_duty_cycle` ,
-  `oracle_awake/sleep_time_ms` , `oracle_total_energy_mj` ,
-  `oracle_packets_generated/enqueued/transmitted` , `oracle_bytes_transmitted` ,
-  `oracle_mpdu_drops_expired/queue_full` , `oracle_psdu_response_timeouts` ,
-  `oracle_queue_size_packets/bytes` , `oracle_avg_latency_ms`
+  `bsr_queue_ac_be/bk/vi/vo`, `rssi_dbm`, `snr_db`, `last_rx_mcs`,
+  `bytes/packets_received_at_ap`, `airtime_used_us`, `fcs_error_count`,
+  `rx_fragment_count`, `last_rx_timestamp_us`, `oracle_duty_cycle`,
+  `oracle_awake/sleep_time_ms`, `oracle_total_energy_mj`,
+  `oracle_packets_generated/enqueued/transmitted`, `oracle_bytes_transmitted`,
+  `oracle_mpdu_drops_expired/queue_full`, `oracle_psdu_response_timeouts`,
+  `oracle_queue_size_packets/bytes`, `oracle_avg_latency_ms`
 
   `5-dial-constants.py` validates this width on load and aborts if it does not divide evenly,
   so an NPZ from an older feature list is rejected rather than silently misread.
@@ -148,9 +148,8 @@ python stack-data.py --input-dir eda-data/run_<timestamp> --max-stas 16 --verbos
 
 #### `3-prepare-data.sh`
 
-Convenience wrapper around `stack-data.py` . Finds the most recent `run_*`
-
-directory automatically, activates the Python venv, runs `stack-data.py` , and
+Convenience wrapper around `stack-data.py`. Finds the most recent `run_*`
+directory automatically, activates the Python venv, runs `stack-data.py`, and
 prints a summary of the output files.
 
 ```bash
@@ -180,11 +179,25 @@ python 4-eda-analysis.py \
     --npz-file eda-data/run_<timestamp>/stacked_transitions.npz
 
 # Optional flags:
-#   --data-log-dir ../data-log    also analyse raw wrapper CSV metrics
+#   --data-log-dir ../data-log    also analyze raw wrapper CSV metrics
 #   --schedule-table table_schedule.json   use human-readable schedule labels
 #   --output-dir plots/           save plots to a specific directory
 #   --no-plots                    text-only analysis
 #   --raw-metrics-only            only run the metric-quality pass
+```
+
+#### `5-dial-constants.py`
+
+Derives the reward `NORM` z-score table (per-metric mean, std, max) from the freshest EDA run and
+writes it next to that run's data. `reward_functions.py` and `analytical_policies.py` load the file
+at import and refuse to import until this step has run, so a failure here aborts the pipeline.
+
+- **Input**: `eda-data/<run_id>/stacked_transitions.npz`
+- **Output**: `eda-data/<run_id>/derived_constants.json`
+
+```bash
+python 5-dial-constants.py                      # freshest run, default output path
+python 5-dial-constants.py --output <path>      # write elsewhere
 ```
 
 #### `2-validate-logvstap.py`
@@ -223,8 +236,8 @@ extract_state_per_sta()                   ← run-single-spawn.py
 ```
 
 The JSONL is produced by **directly reading TWTWrapper output** — it is
-independent of the NS-3 CSV log files. The CSV files ( `py-wrapper-env-*.csv` ,
-`ns3-twt-wrapper-*.csv` ) are generated as a side-effect of the simulation and
+independent of the NS-3 CSV log files. The CSV files (`py-wrapper-env-*.csv`,
+`ns3-twt-wrapper-*.csv`) are generated as a side-effect of the simulation and
 are only consulted by `2-validate-logvstap.py` for cross-validation.
 
 ---
@@ -283,7 +296,7 @@ After `stack-data.py` the arrays in `stacked_transitions.npz` are:
 
 | Array           | Shape    | Dtype   | Description                                   |
 | --------------- | -------- | ------- | --------------------------------------------- |
-| `states`        | (N, 368) | float32 | Flattened per-STA features, padded to 16 STAs |
+| `states`        | (N, 432) | float32 | Flattened per-STA features, padded to 16 STAs |
 | `next_states`   | (N, 368) | float32 | Same for next step                            |
 | `actions`       | (N, 2)   | int32   | `[schedule_idx, assignment_idx]`              |
 | `num_stas`      | (N, )    | int32   | Actual STA count (before padding)             |
@@ -296,7 +309,7 @@ After `stack-data.py` the arrays in `stacked_transitions.npz` are:
 
 ```bash
 # 1. Generate action tables (only needed once)
-python generate_action_tables.py --output-dir
+python generate_action_tables.py --output-dir .
 
 # 2. Collect data (NUM_SPAWNS runs, 1275 by default)
 ./1-collect-data.sh
@@ -306,8 +319,8 @@ python generate_action_tables.py --output-dir
 
 # 4. Run EDA
 python 4-eda-analysis.py \
-    --npz-file eda-data/run_$(ls eda-data | sort -r | head -1)/stacked_transitions.npz
+    --npz-file eda-data/$(ls eda-data | sort -r | head -1)/stacked_transitions.npz
 
-# 5. Dial reward normalisation constants from this EDA
+# 5. Dial reward normalization constants from this EDA
 python 5-dial-constants.py
 ```

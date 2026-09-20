@@ -165,7 +165,7 @@ PHY/MAC events
    ├─► trace callbacks ──► per-STA global arrays
    │                              │
    │           BI tick            │
-   │           └── LogBiLevelMetrics() ──────────────────► CSV (eda-data/)
+   │           └── LogBiLevelMetrics() ──────────────────► CSV (data-log/)
    │
    └─► every 20 BI
           └── LogAndSendCallLevelMetrics()
@@ -266,8 +266,8 @@ Both the simulation and the Python bindings include this single header.
 | ----- | ------------------------ | --------- | ----------------- | ---------------------------- |
 | 0     | `DEVICE_IOT_SENSOR`      | 256 Kbps  | Periodic, sparse  | Battery-powered, best-effort |
 | 1     | `DEVICE_VIDEO_CAMERA`    | 2 Mbps    | Constant bit-rate | Mains-powered, video AC      |
-| 2     | `DEVICE_VOICE_ASSISTANT` | Low       | Bursty            | Latency-critical, voice AC   |
-| 3     | `DEVICE_VIDEO_STREAMING` | High      | Elastic           | Interactive, video AC        |
+| 2     | `DEVICE_VOICE_ASSISTANT` | 64 Kbps   | Bursty            | Latency-critical, voice AC   |
+| 3     | `DEVICE_VIDEO_STREAMING` | 5 Mbps    | Elastic           | Interactive, video AC        |
 
 **`StaApplicationConfig` struct** — per-STA application parameters: data rate (kbps), packet size (bytes), inter-packet interval (ms), start/stop times, device class, QoS user priority, delay bound, and mean data rate for TSPEC.
 
@@ -349,14 +349,14 @@ All values logged are cumulative (not deltas); the EDA pipeline and Python envir
 **`LogAndSendCallLevelMetrics()` → `EnvStruct`**\
 Called every `TWT_UPDATE_INTERVAL_BI` BIs at each controller-update step.
 Calls `PopulateStaObservationRaw()` for each active STA, then returns the filled `EnvStruct`.
-This `EnvStruct` is handed directly to `TWTWrapper:: RequestTWTSchedule()` for IPC.
+This `EnvStruct` is handed directly to `TWTWrapper::RequestTWTSchedule()` for IPC.
 
 **`PopulateStaObservationRaw(StaEnvStruct& sta, uint32_t staId)`**\
 Reads every global trace array for `staId` and fills the corresponding fields in both the `StaRealisticMetrics` and `StaOracleMetrics` sub-structs.
 All values are cumulative snapshots taken at the moment of the call.
 The Python side (specifically `file_comm_env.py`) computes step-deltas by subtracting the previous observation.
 
-> The call-level observation is also written as a row to the call-level CSV (`data-log/call-level-metrics-*.csv`), providing per-step snapshots used by `test-scripts/verify-call-level-metrics.py`.
+> The call-level observation is also written as a row to the call-level CSV (`data-log/ns3-call-log-*.csv`), providing per-step snapshots used by `test-scripts/verify-call-level-metrics.py`.
 
 ---
 
@@ -459,8 +459,7 @@ wrapper.close()
 
 **CSV logging**: Two CSV files per run written to `data-log/`:
 
-- `py-wrapper-env-<timestamp>.csv` — one row per STA per step, all realistic
-  - oracle fields prefixed
+- `py-wrapper-env-<timestamp>.csv` — one row per STA per step, all realistic and oracle fields, prefixed `realistic_` / `oracle_`
 - `py-wrapper-action-<timestamp>.csv` — one row per STA per step, group timing and assignment fields
 
 > `episode_file_runner.py` in `ppo-sb3-scripts/` adds another layer: it acts as a JSON relay between the RL environment's `FileCommEnv` (which reads/writes JSON files) and `TWTWrapper` (which manages the shared-memory connection).
@@ -569,7 +568,7 @@ The project uses a two-level logging architecture optimized for different consum
 
 - **Trigger**: Every beacon interval, starting at BI 75
 - **Method**: `TwtMetrics::LogBiLevelMetrics()`
-- **Output**: `data-log/bi-level-metrics-<simId>.csv`
+- **Output**: `data-log/ns3-BI-log-<timestamp>.csv`
 - **Consumer**: `exploration-scripts/` EDA pipeline; `test-scripts/plot-bi-metrics.py`
 - **Content**: One row per STA per BI, all cumulative counters captured at that instant. Produces ~16 × (total BIs − 75) rows per run.
 
@@ -577,7 +576,7 @@ The project uses a two-level logging architecture optimized for different consum
 
 - **Trigger**: Every 20 BIs (= each controller-update step)
 - **Method**: `TwtMetrics::LogAndSendCallLevelMetrics()`
-- **Output**: `data-log/call-level-metrics-<simId>.csv` + `EnvStruct` over IPC
+- **Output**: `data-log/ns3-call-log-<timestamp>.csv` + `EnvStruct` over IPC
 - **Consumer**: Python controller (real-time); `test-scripts/` verification scripts
 - **Content**: One row per STA per step, same cumulative counters. Produces 16 × 38 = 608 rows per episode.
 
@@ -585,7 +584,7 @@ The project uses a two-level logging architecture optimized for different consum
 
 The simulation never resets its counters, so both levels emit monotonically increasing values.
 Delta computation (throughput/step, energy/step, etc.) is intentionally kept in Python, where it is simpler to vectorize and debug.
-The `file_comm_env.py` observation builder computes step-deltas and normalises them using a `VecNormalize` wrapper.
+The `file_comm_env.py` observation builder computes step-deltas and normalizes them using a `VecNormalize` wrapper.
 
 ---
 
@@ -601,7 +600,7 @@ The IPC layer uses the **ns3-ai** module's `Ns3AiMsgInterfaceImpl` template, whi
 
 The `<id>` suffix is derived from `simId` when `parallelSim = true`, allowing multiple simulation instances to run concurrently (used in multi-seed training).
 
-**Synchronisation**: Each segment has an associated lockable object (`MyLockable_<id>`).
+**Synchronization**: Each segment has an associated lockable object (`MyLockable_<id>`).
 The protocol is strictly alternating:
 
 1. C++ writes `EnvStruct`, signals Python
@@ -685,7 +684,7 @@ cd mod-files/
 
 1. Copies `bsr-manager.h/.cc` to `src/wifi/model/`
 1. Adds both files to `src/wifi/CMakeLists.txt`
-1. Patches `qos-frame-exchange-manager.cc` — inserts the `BsrManager:: RecordBsr()` call after the existing `SetBufferStatus()` call in `PreProcessFrame()`
+1. Patches `qos-frame-exchange-manager.cc` — inserts the `BsrManager::RecordBsr()` call after the existing `SetBufferStatus()` call in `PreProcessFrame()`
 1. Backs up original files before any modification
 
 After both scripts complete, run the full NS-3 build as described in the pipeline section below.
@@ -717,7 +716,7 @@ Stage 1 — Build
   ./ns3 build
 
 Stage 2 — EDA Data Collection  (exploration-scripts/)
-  mkdir -p eda-data && rm -rf eda-data/*
+  mkdir -p eda-data             # each run lands in eda-data/<run_id>/; earlier runs are kept
   ./1-collect-data.sh           # runs many NS-3 instances with random policies
   python3.11 2-validate-logvstap.py  # sanity-checks log vs TAP metrics
   ./3-prepare-data.sh           # converts logs → Parquet / merged CSV
@@ -771,7 +770,7 @@ Work through the sub-directory READMEs in this order to build up a complete unde
 
 ### Step 1 — `test-scripts/`
 
-**`test-scripts/README.md`**
+**`test-scripts/README-test.md`**
 
 Start here.
 Covers the lowest-level smoke tests that verify the simulation binary, the IPC bridge, and the metric pipeline each work correctly in isolation before running any training.
@@ -783,7 +782,7 @@ Covers the lowest-level smoke tests that verify the simulation binary, the IPC b
 
 ### Step 2 — `exploration-scripts/`
 
-**`exploration-scripts/README.md`**
+**`exploration-scripts/README-eda.md`**
 
 After the unit tests pass, use this pipeline to build intuition about the state and action spaces before training.
 
@@ -853,7 +852,7 @@ cd ..
 
 # 2. Build
 cd ../../../..   # NS-3 root
-./ns3 configure --enable-examples --enable-tests \
+./ns3 configure --enable-examples --enable-tests -- \
     -DNS3_PYTHON_BINDINGS=ON \
     -DPython3_EXECUTABLE="$(which python3.11)"
 ./ns3 build

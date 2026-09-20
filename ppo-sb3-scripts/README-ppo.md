@@ -32,7 +32,7 @@ This directory contains the PPO (Proximal Policy Optimization) reinforcement lea
 | `analyze_reward_signal.py` | NORM constant validation from reward log CSVs                   |
 | `run_training.sh`          | Run all three presets through the default training script       |
 | `run_eval.sh`              | Run PPO + Analytical evaluation for all presets                 |
-| `run_all.sh`               | End-to-end pipeline: NS-3 build → EDA → train → eval → plot     |
+| `../run_all.sh`            | End-to-end pipeline: NS-3 build → EDA → train → eval → plot     |
 
 ---
 
@@ -170,7 +170,7 @@ Uses SB3 `PPO` with a custom `EnhancedFeatureExtractor`:
 
 ## Reward Function
 
-`reward_functions.py` computes a **weighted sum of 6 z-score-normalized components**. Each component is normalized against NORM constants regenerated from the current EDA run by `5-dial-constants.py` and loaded at import from `exploration-scripts/derived_constants.json`, then clipped and combined. There is no hardcoded fallback: a missing file or a missing required key raises, so the EDA dial step must run before training or evaluation.
+`reward_functions.py` computes a **weighted sum of 6 z-score-normalized components**. Each component is normalized against NORM constants regenerated from the current EDA run by `5-dial-constants.py` and loaded at import from `exploration-scripts/eda-data/<run_id>/derived_constants.json`, then clipped and combined. There is no hardcoded fallback: a missing file or a missing required key raises, so the EDA dial step must run before training or evaluation.
 
 ### Components
 
@@ -234,7 +234,7 @@ python3.11 train_ppo_V1.py \
 # Resume from checkpoint
 python3.11 train_lstm_ppo_V1.py \
     --reward-preset queue \
-    --resume checkpoints/lstm_ppo_V1_twt_queue_20260131_151302/model.zip
+    --resume checkpoints/run_20260131_010432/lstm_ppo_V1_twt_queue_20260131_151302/lstm_ppo_V1_twt_final.zip
 ```
 
 ### Key training arguments
@@ -271,21 +271,21 @@ The script sets `INCLUDE_ANALYTICAL=true` and `N_EPISODES=50` by default.
 ```bash
 # Compare LSTM PPO vs Analytical for throughput preset
 python3.11 eval_policy.py \
-    checkpoints/lstm_ppo_V1_twt_throughput_20260131_012841/ \
+    checkpoints/run_20260131_010432/lstm_ppo_V1_twt_throughput_20260131_012841/ \
     --n-episodes 10 \
     --reward-type throughput \
     --compare-analytical throughput
 
 # Compare against all analytical variants
 python3.11 eval_policy.py \
-    checkpoints/ppo_V1_twt_throughput_20260202_013615/ \
+    checkpoints/run_20260131_010432/ppo_V1_twt_throughput_20260202_013615/ \
     --n-episodes 5 \
     --reward-type throughput \
     --compare-analytical throughput energy queue \
     --output-prefix my_run_
 ```
 
-Results are written to `eval_results/eval_<prefix><preset>_<timestamp>.json`.
+Results are written to `eval_results/<run_id>/eval_<prefix><preset>_<timestamp>.json` (directly under `eval_results/` when `TWT_RUN_ID` is unset).
 
 ---
 
@@ -308,7 +308,7 @@ python3.11 plot_evaluation.py                                  # LSTM PPO result
 python3.11 plot_evaluation.py --training-script train_ppo_V1.py
 ```
 
-Reads `eval_results/eval_*.json`. Generates bar charts comparing PPO vs baselines per preset and writes `plots/*_summary_table.csv`.
+Reads `eval_results/<run_id>/eval_*.json`. Generates bar charts comparing PPO vs baselines per preset and writes `plots/<run_id>/eval_<model>_summary_table.csv`.
 
 ### Reward signal diagnosis
 
@@ -322,10 +322,14 @@ Reads `reward_logs/reward_log_*_part*.csv` from checkpoint directories. Generate
 
 ## Output Structure
 
+Every artifact root is nested under the run id when `TWT_RUN_ID` is set, which `run_all.sh`
+always does; standalone invocations write to the root directory directly.
+
 ```
-checkpoints/
+checkpoints/<run_id>/
 ├── lstm_ppo_V1_twt_throughput_20260131_012841/
-│   ├── model.zip                            # Final trained policy
+│   ├── lstm_ppo_V1_twt_final.zip            # Final trained policy
+│   ├── lstm_ppo_V1_twt_<N>_steps.zip        # Periodic step checkpoints
 │   ├── vecnormalize.pkl                     # VecNormalize stats (if --normalize-obs)
 │   ├── hyperparams.json                     # All training hyperparameters
 │   ├── normalization_stats.json             # Obs normalization statistics
@@ -337,16 +341,21 @@ checkpoints/
 ├── ppo_V1_twt_throughput_*/                 # MLP PPO checkpoints (if trained)
 └── ...
 
-tb_logs/
+tb_logs/<run_id>/
 ├── lstm_ppo_V1_twt_throughput_*/
 │   └── RecurrentPPO_1/                      # TensorBoard events
 └── ppo_V1_twt_throughput_*/
     └── PPO_1/
 
-eval_results/
+eval_results/<run_id>/
 ├── eval_lstm_ppo_V1_twt_throughput_<timestamp>.json
-├── eval_lstm_ppo_V1_twt_summary_table.csv
 └── ...
+
+plots/<run_id>/
+├── eval_lstm_ppo_V1_twt_summary_table.csv
+├── eval_lstm_ppo_V1_twt_*.png
+├── training_lstm_ppo_V1_twt_<preset>.png
+└── reward_signal_lstm_ppo_V1_twt_analysis.png
 ```
 
 Checkpoint directories are named `{script_name_without_train_and_py}_twt_<preset>_<YYYYMMDD_HHMMSS>`.

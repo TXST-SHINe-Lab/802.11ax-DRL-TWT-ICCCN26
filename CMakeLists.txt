@@ -69,9 +69,6 @@ set_target_properties(pb_twt_interface_py PROPERTIES
 )
 target_link_libraries(pb_twt_interface_py PRIVATE ${libai})
 
-# Build Python interface along with C++ lib
-# Note: Dependencies will be handled automatically by the build system
-
 # Additional deployment for Python binding library - copy to cmake-cache and source
 add_custom_command(TARGET pb_twt_interface_py POST_BUILD
     # Copy to cmake-cache build directory
@@ -113,9 +110,6 @@ set(TWT_PYTHON_BINDINGS_SOURCES ${TWT_PYTHON_BINDINGS_SOURCES} PARENT_SCOPE)
 set(TWT_PYTHON_BINDINGS_HEADERS ${TWT_PYTHON_BINDINGS_HEADERS} PARENT_SCOPE)
 set(TWT_PYTHON_BINDINGS_DIR ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
 set(TWT_PYTHON_BINDINGS_AUTHOR "${PROJECT_AUTHOR}" PARENT_SCOPE)
-
-# Add compile definitions for author information
-# Note: Compile definitions will be handled by the build system automatically
 
 # Installation rules
 install(FILES ${TWT_PYTHON_BINDINGS_HEADERS}

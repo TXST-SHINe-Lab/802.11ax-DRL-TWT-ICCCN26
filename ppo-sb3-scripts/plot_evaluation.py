@@ -6,7 +6,7 @@
 # Author: Ahmed Maksud <ahmed.maksud@email.ucr.edu>
 # PI: Marcelo Menezes De Carvalho <mmcarvalho@txstate.edu>
 
-"""plot_evaluation.py - evaluation results visualisation for TWT WiFi scheduling.
+"""plot_evaluation.py - evaluation results visualization for TWT WiFi scheduling.
 
 Generates publication-ready plots from the evaluation JSON files written by eval_policy.py,
 comparing PPO against whichever baselines that run included, across all presets.

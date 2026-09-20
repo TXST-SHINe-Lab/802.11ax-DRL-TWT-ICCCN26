@@ -92,7 +92,7 @@ class EnhancedFeatureExtractor(BaseFeaturesExtractor):
         self._init_weights()
 
     def _init_weights(self):
-        """Apply orthogonal initialisation, gain sqrt(2), for training stability."""
+        """Apply orthogonal initialization, gain sqrt(2), for training stability."""
         for module in self.modules():
             if isinstance(module, nn.Linear):
                 nn.init.orthogonal_(module.weight, gain=np.sqrt(2))
@@ -532,7 +532,7 @@ def train_ppo(
     policy_kwargs = {
         "net_arch": dict(pi=net_arch_pi, vf=net_arch_vf),
         "activation_fn": nn.GELU,  # Better gradient flow than ReLU
-        "ortho_init": True,  # Orthogonal initialisation for stability
+        "ortho_init": True,  # Orthogonal initialization for stability
     }
 
     if use_custom_extractor:

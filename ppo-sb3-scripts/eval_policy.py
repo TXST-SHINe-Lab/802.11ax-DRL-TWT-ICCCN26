@@ -176,7 +176,7 @@ class ThroughputAdaptiveHeuristic:
         throughput: 0.35 (PRIMARY)
         queue: 0.20 (SECONDARY - queue affects throughput)
         drops: 0.15 (SECONDARY - drops = lost throughput)
-        airtime: 0.15 (penalises long TWT schedules)
+        airtime: 0.15 (penalizes long TWT schedules)
         energy: 0.10 (TERTIARY)
         channel: 0.05 (TERTIARY)
 

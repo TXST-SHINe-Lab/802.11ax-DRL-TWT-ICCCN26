@@ -84,7 +84,7 @@ CHECKPOINT_PATTERN="${CHECKPOINT_PATTERN%.py}_twt_" # Drop .py, append _twt_
 
 # Optional PPO hyperparameters, uncomment to override the training script's defaults.
 # Each is passed through only when set; see the flag wiring further down.
-# LEARNING_RATE=0.0001    # Lower LR for more stable learning, default 3e-4
+# LEARNING_RATE=0.0001    # Lower LR for more stable learning; defaults 3e-4 (MLP), 2.5e-4 (LSTM)
 # N_STEPS=256             # More steps per rollout for better gradient estimates
 # BATCH_SIZE=128          # Larger batches for stability
 # ENT_COEF=0.02           # Higher entropy for more exploration

@@ -48,7 +48,7 @@ The analytical policies follow this decision flow:
 │            ▼           ▼           ▼                            │
 │    ┌─────────────┐ ┌───────────┐ ┌───────────────┐              │
 │    │ QueuingModel│ │EnergyModel│ │ThroughputModel│              │
-│    │   (M/D/1)   │ │  (Power)  │ │ (Collision) v │              │
+│    │   (M/D/1)   │ │  (Power)  │ │ (Collision)   │              │
 │    └──────┬──────┘ └─────┬─────┘ └──────┬────────┘              │
 │           │              │              │                       │
 │           └──────────────┼──────────────┘                       │
@@ -117,7 +117,7 @@ Models the WiFi TWT system as a **deterministic service queue**:
 
 #### Calibration from the EDA
 
-Loaded at import from `../exploration-scripts/derived_constants.json`, written by
+Loaded at import from `../exploration-scripts/eda-data/<run_id>/derived_constants.json`, written by
 `5-dial-constants.py` from the newest EDA run. There is no hardcoded fallback: a missing
 file or key raises.
 
@@ -138,7 +138,7 @@ from this document.
 QueuingModel.estimate_service_rate(wake_duration_ms, num_sta_in_group) -> float
 ```
 
-Estimates packets transmitted per STA in a wake period, Eq. (10):
+Estimates packets transmitted per STA in a wake period, Eq. (11) of the paper:
 
 ```
 mu(d, n) = BASELINE_RATE_PER_MS * d * (1 - 0.025 * (n - 1)) * 1.5
@@ -219,8 +219,8 @@ ThroughputModel.estimate_collision_prob(num_sta, cw=CW_MIN)
 | STAs Contending | Collision Probability |
 | --------------- | --------------------- |
 | 4               | ~19%                  |
-| 8               | ~35%                  |
-| 16              | ~53%                  |
+| 8               | ~38%                  |
+| 16              | ~64%                  |
 
 #### Effective Throughput
 
@@ -241,7 +241,7 @@ two objective weights.
 At construction the baseline enumerates all 20 x 19 = 380 action pairs. For each pair it
 applies the assignment pattern to get per-group STA counts, then computes `mu(d_k, n_k)` per
 group with `estimate_service_rate()` and the pair's total energy with `compute_energy_mj()`.
-It also records `rho_max`, the worst per-STA utilisation, and marks a pair stable when
+It also records `rho_max`, the worst per-STA utilization, and marks a pair stable when
 `rho_max < 0.85`.
 
 At each step `predict()` converts the observed BSR index to a packet backlog, projects one
@@ -252,7 +252,7 @@ selects the pair minimising
 W_QUEUE * scale(backlog) + W_ENERGY * scale(energy)
 ```
 
-where `scale()` is min-max normalisation across the 380 candidates. Unstable pairs are
+where `scale()` is min-max normalization across the 380 candidates. Unstable pairs are
 excluded whenever at least one stable pair exists.
 
 | Policy                       | `W_QUEUE` | `W_ENERGY` |

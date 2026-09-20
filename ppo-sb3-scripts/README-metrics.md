@@ -1,6 +1,5 @@
 # PPO Agent and Reward Function Metrics Documentation
 
-**Last Updated:** January 25, 2026\
 **Author:** Ahmed Maksud\
 **Lab:** SHINE Lab, Texas State University
 
@@ -15,7 +14,6 @@
 1. [Visual Summary](#visual-summary)
 1. [Data Flow](#data-flow)
 1. [Excluded Metrics](#excluded-metrics)
-1. [Files Modified](#files-modified)
 
 ---
 
@@ -36,7 +34,7 @@ This document describes the exact metrics used by the PPO agent (observation) an
 **Total Dimensions:** 208 (13 features × 16 STAs)
 
 Per-metric statistics are not reproduced here, since they change with every EDA run.
-Mean, standard deviation and max come from `../exploration-scripts/derived_constants.json`,
+Mean, standard deviation and max come from `../exploration-scripts/eda-data/<run_id>/derived_constants.json`,
 written by `5-dial-constants.py` and loaded at import by `reward_functions.py`.
 Unique-value counts, category and quality status come from `metric_quality_analysis.json`
 in the EDA run directory.
@@ -100,7 +98,7 @@ The reward function receives `sta_deltas` containing 15 metrics per STA. These i
 | `bsr_queue_index`      | `queue` (a BSR index in 0 through 254, not bytes) |
 | `fcs_error_count`      | `channel`                                         |
 | `rx_fragment_count`    | `channel`                                         |
-| `last_rx_timestamp_us` | read but unused; Eq. (9) has no recency term      |
+| `last_rx_timestamp_us` | read but unused; Eq. (9) of the paper has no recency term      |
 | `duty_cycle`           | `energy`                                          |
 
 ### Hidden Oracle Instantaneous (2 metrics — PPO cannot see)
@@ -116,7 +114,7 @@ The reward function receives `sta_deltas` containing 15 metrics per STA. These i
 
 ### Six-Component Structure (14 of 15 Metrics Used)
 
-Corresponds to Eqs. (4) through (9); see `PRESET_WEIGHTS` in `reward_functions.py`.
+Corresponds to Eqs. (4) through (9) of the paper; see `PRESET_WEIGHTS` in `reward_functions.py`.
 
 | Component    | Metrics Used                                                                          | Description                      |
 | ------------ | ------------------------------------------------------------------------------------- | -------------------------------- |
@@ -124,7 +122,7 @@ Corresponds to Eqs. (4) through (9); see `PRESET_WEIGHTS` in `reward_functions.p
 | `queue`      | `queue_size_bytes`, `queue_size_packets`, `bsr_queue_index`, `delta_packets_enqueued` | Buffer health, the latency proxy |
 | `drops`      | `delta_drops_expired`                                                                 | Packet expiration penalty        |
 | `energy`     | `delta_energy_mj`, `delta_awake_time_ms`, `delta_sleep_time_ms`, `duty_cycle`         | Power consumption                |
-| `airtime`    | Total scheduled wake duration of the selected schedule                                | Penalises long TWT schedules     |
+| `airtime`    | Total scheduled wake duration of the selected schedule                                | Penalizes long TWT schedules     |
 | `channel`    | `fcs_error_count`, `rx_fragment_count`                                                | Channel quality                  |
 
 ### Preset Weights
@@ -268,17 +266,9 @@ carries the current classification and counts; the lists below name the metrics,
 
 - `is_active`, `tx_power_dbm`, `last_rx_mcs`, etc.
 
-> Under the paper-accurate radio config (Nakagami zones + AP/STA power), the
+> Under the radio configuration used in the paper (Nakagami zones + AP/STA power), the
 > link-quality metrics `rssi_dbm`, `snr_db`, `rcpi`, `rsni`, `link_margin_db`
 > carry enough variance to no longer count as low-variance. Check their current
 > `status` in `metric_quality_analysis.json` rather than assuming.
-
----
-
-## Files Modified
-
-- `file_comm_env.py`: `build_ppo_observation()`, `compute_sta_deltas()`
-- `reward_functions.py`: `compute_reward()`, the six `compute_*_component()` functions, metric lists
-- `episode_file_runner.py`: (receives raw metrics, no changes needed)
 
 ---

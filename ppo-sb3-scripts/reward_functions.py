@@ -26,7 +26,7 @@ The 6 components, between them covering every metric:
 5. CHANNEL: fcs_error_count, rx_fragment_count
 6. AIRTIME: total scheduled wake duration of the selected schedule
 
-Normalisation constants come from derived_constants.json, written by 5-dial-constants.py into the EDA run directory it was derived from; see run_paths.derived_constants_path() for how the current file is located.
+Normalization constants come from derived_constants.json, written by 5-dial-constants.py into the EDA run directory it was derived from; see run_paths.derived_constants_path() for how the current file is located.
 """
 
 from typing import List, Dict, Optional, Callable, Tuple
@@ -69,7 +69,7 @@ BEACON_INTERVAL_MS = 102.4  # ms, the standard beacon interval
 MAX_SCHEDULE_DURATION_MS = float(max(SCHEDULE_DURATIONS.values()))
 
 
-# --- Normalisation constants, the z-score table ---
+# --- Normalization constants, the z-score table ---
 # Sole source: derived_constants.json, produced by the EDA dial step 5-dial-constants.py and
 # located per-run by run_paths.derived_constants_path().
 
@@ -163,7 +163,7 @@ PRESET_WEIGHTS = {
         "queue": 0.20,  # Secondary, queue depth caps throughput
         "drops": 0.15,  # Secondary, a drop is throughput already paid for
         "energy": 0.10,  # Tertiary
-        "airtime": 0.15,  # Penalises long TWT schedules
+        "airtime": 0.15,  # Penalizes long TWT schedules
         "channel": 0.05,  # Tertiary
     },
     "energy": {
@@ -258,7 +258,7 @@ def zscore_reward(
     value: float, metric_name: str, scale: float = 1.0, invert: bool = False
 ) -> float:
     """
-    Convert a raw value to a reward by z-score normalisation then soft clipping.
+    Convert a raw value to a reward by z-score normalization then soft clipping.
 
     - value at mean → 0
     - value 1 std above mean → tanh(1) * scale ≈ 0.76 * scale
@@ -280,12 +280,12 @@ def ratio_reward(
     value: float, expected: float, std: float, scale: float = 1.0
 ) -> float:
     """
-    Convert a ratio to a reward by z-score normalisation against an explicit mean and std.
+    Convert a ratio to a reward by z-score normalization against an explicit mean and std.
 
     Args:
         value: Actual value, for example total_bytes
         expected: Expected value, for example mean * n_sta
-        std: Standard deviation for normalisation; a non-positive std returns 0.0
+        std: Standard deviation for normalization; a non-positive std returns 0.0
         scale: Max reward magnitude
     """
     if std <= 0:
@@ -603,12 +603,12 @@ def compute_channel_component(sta_deltas: List[Dict[str, float]], n_sta: int) ->
 
 
 # --- Component 6: airtime, schedule duration efficiency ---
-# Penalises long TWT schedules, encouraging efficient use of the beacon interval.
+# Penalizes long TWT schedules, encouraging efficient use of the beacon interval.
 
 
 def compute_airtime_component(schedule_idx: Optional[int], n_sta: int) -> Dict:
     """
-    Airtime efficiency: penalise long TWT schedule durations.
+    Airtime efficiency: penalize long TWT schedule durations.
 
     Shorter schedules are better because:
     - More time available for other traffic (non-TWT STAs, management)
@@ -638,7 +638,7 @@ def compute_airtime_component(schedule_idx: Optional[int], n_sta: int) -> Dict:
     utilization = duration_ms / BEACON_INTERVAL_MS
 
     # --- Duration reward, monotonically decreasing in duration ---
-    # Normalised to 1.0 at 0 ms and 0.0 at max_duration, then shifted so the longest schedule scores negative.
+    # Normalized to 1.0 at 0 ms and 0.0 at max_duration, then shifted so the longest schedule scores negative.
     max_duration = MAX_SCHEDULE_DURATION_MS
     duration_normalized = 1.0 - (duration_ms / max_duration)
     # 0 ms → +0.82, 20 ms → +0.67, 40 ms → +0.45, 60 ms → +0.15, 90 ms → -0.34

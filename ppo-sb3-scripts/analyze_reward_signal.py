@@ -6,7 +6,7 @@
 # Author: Ahmed Maksud <ahmed.maksud@email.ucr.edu>
 # PI: Marcelo Menezes De Carvalho <mmcarvalho@txstate.edu>
 
-"""analyze_reward_signal.py - analyse reward signal quality and the NORM constants.
+"""analyze_reward_signal.py - analyze reward signal quality and the NORM constants.
 
 Reads the reward log CSVs written by RewardLoggerCallback during training and answers three questions:
 1. Are NORM constants (mean/std) appropriate for the observed data?
@@ -15,7 +15,7 @@ Reads the reward log CSVs written by RewardLoggerCallback during training and an
 
 Writes a multi-panel PNG. The comparison baseline is the live NORM table from
 derived_constants.json (located per-run by run_paths.derived_constants_path()), the same table
-reward_functions.py normalises with, so the report is about the constants actually in use.
+reward_functions.py normalizes with, so the report is about the constants actually in use.
 
 Usage:
     python3.11 analyze_reward_signal.py
@@ -45,7 +45,7 @@ COLORS = {
     "default": "#95a5a6",
 }
 
-# --- Live NORM table, the constants the reward is actually normalised with ---
+# --- Live NORM table, the constants the reward is actually normalized with ---
 
 DERIVED_CONSTANTS_PATH = run_paths.derived_constants_path()
 
@@ -53,7 +53,7 @@ DERIVED_CONSTANTS_PATH = run_paths.derived_constants_path()
 def _load_current_norm() -> dict:
     """Load the NORM table from derived_constants.json, written by 5-dial-constants.py.
 
-    This is the same table reward_functions.py normalises with, so the mismatch report
+    This is the same table reward_functions.py normalizes with, so the mismatch report
     below describes the constants actually in use rather than a stale copy.
 
     Raises if the file is missing or has no NORM block; there is deliberately no
@@ -62,7 +62,7 @@ def _load_current_norm() -> dict:
     if not os.path.exists(DERIVED_CONSTANTS_PATH):
         raise FileNotFoundError(
             f"EDA constants file not found: {DERIVED_CONSTANTS_PATH}\n"
-            "Run exploration-scripts/5-dial-constants.py before analysing reward logs."
+            "Run exploration-scripts/5-dial-constants.py before analyzing reward logs."
         )
     with open(DERIVED_CONSTANTS_PATH) as f:
         derived = json.load(f)

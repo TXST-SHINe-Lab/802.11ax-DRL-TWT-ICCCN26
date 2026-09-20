@@ -293,7 +293,7 @@ main(int argc, char* argv[])
     Connect802dot11kTraces(networkSetup.GetStaNodes(), networkSetup.GetApNodes());
 
     // --- BSR manager setup ---
-    std::cout << "\n===== BSR MANAGER DEMO ENABLED =====" << std::endl;
+    std::cout << "\n===== BSR manager enabled =====" << std::endl;
 
     Ptr<BsrManager> bsrManager = BsrManager::GetInstance();
 
@@ -331,9 +331,6 @@ main(int argc, char* argv[])
     // }
 
     // --- Schedule dynamic TWT updates ---
-    std::cout << "first cycle starts here, then it is recursively called thru PeriodicTWTUpdate in "
-                 "the scheduler. Only schedules for now, does not run yet."
-              << std::endl;
     if (enableDynamicTWT && twtWrapper)
     {
         std::cout << "\n\033[34m[Dynamic TWT] Scheduling periodic updates...\033[0m" << std::endl;

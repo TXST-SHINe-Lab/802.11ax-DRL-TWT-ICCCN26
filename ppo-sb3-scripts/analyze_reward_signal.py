@@ -539,7 +539,7 @@ def plot_analysis(all_data: dict, output_path: str):
                 f"  ⚠️  Z-scores need attention: {', '.join(bad_zscores)}"
             )
         else:
-            summary_lines.append("  ✅ All z-scores within expected range")
+            summary_lines.append("  ✓ All z-scores within expected range")
 
         # Z-score saturation check (separate from norm quality)
         saturating_zscores = [
@@ -560,7 +560,7 @@ def plot_analysis(all_data: dict, output_path: str):
                 f"  ⚠️  Saturating reward components: {', '.join(saturated)}"
             )
         else:
-            summary_lines.append("  ✅ No reward saturation detected")
+            summary_lines.append("  ✓ No reward saturation detected")
 
         # NORM suggestions
         needs_update = [k for k, v in data["suggestions"].items() if v["needs_update"]]
@@ -569,7 +569,7 @@ def plot_analysis(all_data: dict, output_path: str):
                 f"  ⚠️  NORM update suggested for: {', '.join(needs_update)}"
             )
         else:
-            summary_lines.append("  ✅ NORM constants are appropriate")
+            summary_lines.append("  ✓ NORM constants are appropriate")
 
     summary_lines.append("\n" + "=" * 80)
 
@@ -631,14 +631,14 @@ def print_norm_suggestions(all_data: dict):
 
         for col, stats in zscore_results.items():
             status = (
-                "✅ OK"
+                "✓ OK"
                 if not stats.get("saturation_warning", False)
                 else "⚠️ SATURATING"
             )
             if stats["norm_quality"] == "BAD_MEAN":
-                status = "❌ BAD MEAN"
+                status = "✗ BAD MEAN"
             elif stats["norm_quality"] == "BAD_STD":
-                status = "❌ BAD STD"
+                status = "✗ BAD STD"
 
             print(
                 f"  {col:<25} {stats['mean']:>8.2f} {stats['std']:>8.2f} "
@@ -676,7 +676,7 @@ def print_norm_suggestions(all_data: dict):
         mean_ratio = avg_mean / val["current_mean"] if val["current_mean"] != 0 else 0
         needs_update = abs(mean_ratio - 1) > 0.3
 
-        status = "# ⚠️  UPDATE" if needs_update else "# ✅ OK"
+        status = "# ⚠️  UPDATE" if needs_update else "# ✓ OK"
         print(
             f"    '{key}': {{'mean': {avg_mean:.1f}, 'std': {avg_std:.1f}, 'max': {avg_max:.1f}}},  {status}"
         )

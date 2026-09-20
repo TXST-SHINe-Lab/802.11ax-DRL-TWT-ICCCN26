@@ -1,6 +1,6 @@
 {
   "description": "TWT Schedule Table (Dim-1) - Group configurations",
-  "generated": "20260810_180829",
+  "generated": "20260914_222221",
   "beacon_interval_ms": 102.4,
   "max_total_duration_ms": 95.0,
   "num_schedules": 20,

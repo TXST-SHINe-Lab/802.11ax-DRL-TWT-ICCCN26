@@ -150,7 +150,7 @@ class DetailedLogValidator:
             }
             self.log("⚠️  Using Py-wrapper CSV format (limited variable comparisons)")
         else:
-            self.log("❌ Cannot determine CSV format from columns!")
+            self.log("✗ Cannot determine CSV format from columns!")
             return
 
         self.log("\n" + "-" * 80)
@@ -171,12 +171,12 @@ class DetailedLogValidator:
                     if result["match"]:
                         self.matches.append((i, jsonl_var, result))
                         self.log(
-                            f"  ✅ {jsonl_var:30s}: {jsonl_val} == {csv_var} = {csv_val}"
+                            f"  ✓ {jsonl_var:30s}: {jsonl_val} == {csv_var} = {csv_val}"
                         )
                     else:
                         self.mismatches.append((i, jsonl_var, result))
                         self.log(
-                            f"  ❌ {jsonl_var:30s}: {jsonl_val} != {csv_var} = {csv_val} | {result['note']}"
+                            f"  ✗ {jsonl_var:30s}: {jsonl_val} != {csv_var} = {csv_val} | {result['note']}"
                         )
 
         # Per-STA variable comparisons
@@ -369,7 +369,7 @@ class DetailedLogValidator:
 
         # Print metadata if available
         if metadata:
-            self.log(f"\n📋 METADATA:")
+            self.log(f"\nMETADATA:")
             self.log(f"  Spawn ID:              {metadata.get('spawn_id')}")
             self.log(f"  Seed:                  {metadata.get('seed')}")
             self.log(f"  Log Timestamp:         {metadata.get('log_timestamp')}")
@@ -392,8 +392,8 @@ class DetailedLogValidator:
         self.log("\n" + "=" * 80)
         self.log("SUMMARY")
         self.log("=" * 80)
-        self.log(f"✅ Variable matches: {len(self.matches)}")
-        self.log(f"❌ Variable mismatches: {len(self.mismatches)}")
+        self.log(f"✓ Variable matches: {len(self.matches)}")
+        self.log(f"✗ Variable mismatches: {len(self.mismatches)}")
         self.log(f"⚠️  Errors: {len(self.errors)}")
 
 
@@ -505,7 +505,7 @@ def main():
 
     if not runs_to_validate:
         parser.print_help()
-        print("\n❌ Error: No spawn_*.jsonl files found.")
+        print("\n✗ Error: No spawn_*.jsonl files found.")
         print("   Usage: python3 2-validate-logvstap.py [--dir <eda-data or run_dir>]")
         sys.exit(1)
 
@@ -553,12 +553,12 @@ def main():
                     pass
 
             if not csv_path:
-                print("❌ (No CSV found)")
+                print("✗ (No CSV found)")
                 results.append((os.path.basename(jsonl_file), False, "No CSV"))
                 continue
 
             if not os.path.exists(csv_path):
-                print(f"❌ (CSV missing)")
+                print(f"✗ (CSV missing)")
                 results.append((os.path.basename(jsonl_file), False, "CSV not found"))
                 continue
 
@@ -566,7 +566,7 @@ def main():
                 validator = DetailedLogValidator(verbose=True)
                 validator.run_full_analysis(jsonl_file, csv_path)
 
-                status = "✅" if len(validator.mismatches) == 0 else "⚠️"
+                status = "✓" if len(validator.mismatches) == 0 else "⚠️"
                 matches = len(validator.matches)
                 mismatches = len(validator.mismatches)
 
@@ -580,7 +580,7 @@ def main():
                 )
 
             except Exception as e:
-                print(f"❌ (Error: {str(e)[:30]})")
+                print(f"✗ (Error: {str(e)[:30]})")
                 results.append((os.path.basename(jsonl_file), False, str(e)[:30]))
 
         all_results.append((run_name, results))
@@ -599,11 +599,11 @@ def main():
         grand_total_passed += passed
         grand_total_failed += failed
 
-        status_symbol = "✅" if failed == 0 else "⚠️"
+        status_symbol = "✓" if failed == 0 else "⚠️"
         print(f"\n{status_symbol} {run_name}: {passed}/{len(results)} passed")
 
         for spawn_name, success, status in results:
-            symbol = "  ✅" if success else "  ❌"
+            symbol = "  ✓" if success else "  ✗"
             print(f"{symbol} {spawn_name:20s} {status}")
 
     print("\n" + "-" * 80)
@@ -613,7 +613,7 @@ def main():
     )
 
     if grand_total_failed == 0:
-        print("🎉 All spawns in all runs validated successfully!")
+        print("All spawns in all runs validated successfully!")
         sys.exit(0)
     else:
         print(f"⚠️  {grand_total_failed} spawn(s) failed validation")

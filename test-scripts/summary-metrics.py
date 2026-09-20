@@ -402,7 +402,7 @@ def main():
     print("COMPREHENSIVE TWT SIMULATION REPORT".center(80))
     print(f"{'='*80}\n")
 
-    print(f"📁 Loading logs from: {os.path.abspath(logdir)}\n")
+    print(f"Loading logs from: {os.path.abspath(logdir)}\n")
     logs = load_all_logs(logdir)
 
     if not logs:

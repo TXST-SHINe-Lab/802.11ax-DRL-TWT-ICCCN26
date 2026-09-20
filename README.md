@@ -741,14 +741,14 @@ Stage 6 — Cleanup between training and evaluation
 Stage 7 — Evaluation
   ./run_eval.sh --training-script train_lstm_ppo_V1.py
   # Loads each checkpoint, evaluates over multiple seeds
-  # Results → eval_results/eval_<run_id>.json
+  # Results → eval_results/<run_id>/eval_<model>_<preset>_<timestamp>.json
 
 Stage 8 — Cleanup after evaluation
 
 Stage 9 — Plotting
-  python3.11 plot_training.py   → plots/training_curves_*.png
-  python3.11 plot_evaluation.py → plots/eval_comparison_*.png
-  python3.11 analyze_reward_signal.py → reward component breakdown
+  python3.11 plot_training.py   → plots/<run_id>/training_<model>_<preset>.png
+  python3.11 plot_evaluation.py → plots/<run_id>/eval_<model>_*.png + eval_<model>_summary_table.csv
+  python3.11 analyze_reward_signal.py → plots/<run_id>/reward_signal_<model>_analysis.png
 
 Stage 10 — Same pass for the MLP-PPO variant
   # run_all.sh then repeats stages 5–9 with train_ppo_V1.py

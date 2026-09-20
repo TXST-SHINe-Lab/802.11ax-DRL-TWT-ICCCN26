@@ -173,9 +173,10 @@ class ThroughputAdaptiveHeuristic:
     Adaptive heuristic for 'throughput' preset.
 
     Matches reward_functions.py PRESET_WEIGHTS['throughput']:
-        throughput: 0.40 (PRIMARY)
-        queue: 0.25 (SECONDARY - queue affects throughput)
-        drops: 0.20 (SECONDARY - drops = lost throughput)
+        throughput: 0.35 (PRIMARY)
+        queue: 0.20 (SECONDARY - queue affects throughput)
+        drops: 0.15 (SECONDARY - drops = lost throughput)
+        airtime: 0.15 (penalises long TWT schedules)
         energy: 0.10 (TERTIARY)
         channel: 0.05 (TERTIARY)
 
@@ -270,10 +271,11 @@ class EnergyAdaptiveHeuristic:
     Adaptive heuristic for 'energy' preset.
 
     Matches reward_functions.py PRESET_WEIGHTS['energy']:
-        energy: 0.40 (PRIMARY)
-        throughput: 0.25 (SECONDARY - need some throughput)
-        drops: 0.15 (SECONDARY - retx waste energy)
-        queue: 0.15 (TERTIARY)
+        energy: 0.35 (PRIMARY)
+        throughput: 0.20 (SECONDARY - need some throughput)
+        airtime: 0.20 (shorter schedules save energy)
+        drops: 0.10 (SECONDARY - retx waste energy)
+        queue: 0.10 (TERTIARY)
         channel: 0.05 (TERTIARY)
 
     Strategy:
@@ -352,10 +354,11 @@ class QueueAdaptiveHeuristic:
     Adaptive heuristic for 'queue' preset (latency optimization).
 
     Matches reward_functions.py PRESET_WEIGHTS['queue']:
-        queue: 0.40 (PRIMARY - latency proxy)
-        drops: 0.25 (SECONDARY - drops = queue overflow)
+        queue: 0.35 (PRIMARY - latency proxy)
+        drops: 0.20 (SECONDARY - drops = queue overflow)
         throughput: 0.20 (SECONDARY - need TX to drain)
         energy: 0.10 (TERTIARY)
+        airtime: 0.10 (shorter schedules mean lower latency)
         channel: 0.05 (TERTIARY)
 
     Strategy:

@@ -297,7 +297,7 @@ class QueuingModel:
         cls, wake_duration_ms: float, num_sta_in_group: float
     ) -> float:
         """
-        Per-STA service rate, Eq. (10):
+        Per-STA service rate, Eq. (11):
 
             mu(d, n) = mu_0 * d * (1 - CONTENTION_SLOPE * (n - 1)) * G_agg
 

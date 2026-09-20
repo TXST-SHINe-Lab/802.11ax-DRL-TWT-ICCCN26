@@ -43,7 +43,7 @@ if [ ! -d "$NS3_ROOT/src/wifi" ]; then
     echo -e "${RED}ERROR: NS-3 directory structure not found!${NC}"
     echo "Expected to find: $NS3_ROOT/src/wifi"
     echo "Current directory: $SCRIPT_DIR"
-    echo "Please run this script from: contrib/ai/examples/MobiCom/twt/mod-files/"
+    echo "Please run this script from: contrib/ai/examples/twt/mod-files/"
     exit 1
 fi
 

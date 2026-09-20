@@ -814,13 +814,13 @@ if [ $ISSUES -eq 0 ]; then
     print_success "ALL CHECKS PASSED! TWT setup completed successfully."
     echo ""
     cat <<EOF
-✅ Complete TWT Setup Applied:
+✓ Complete TWT Setup Applied:
 
-📁 Downloaded/Copied Files:
+Downloaded/Copied Files:
   ✓ $TWT_AGREEMENT_H (from GitHub if needed)
   ✓ $TWT_AGREEMENT_CC (from GitHub if needed)
 
-🔧 Modified Files:
+Modified Files:
   ✓ $WIFI_MAC_H (TWT method declarations)
   ✓ $WIFI_MAC_CC (TWT method implementations)
   ✓ $WIFI_RSM_H (TWT support structures)
@@ -829,15 +829,15 @@ if [ $ISSUES -eq 0 ]; then
   ✓ $AP_WIFI_MAC_H (AP GetTimeTillNextBeacon declaration)
   ✓ $AP_WIFI_MAC_CC (AP GetTimeTillNextBeacon implementation)
 
-🛠️  Compatibility Fixes:
+Compatibility Fixes:
   ✓ EventId::IsRunning() → IsPending()
   ✓ Removed GetNavDurationLeft() calls
   ✓ NS-3.44 compatible TWT API
 
-📋 Build System:
+Build System:
   ✓ CMakeLists.txt updated (if found)
 
-🚀 NEXT STEPS:
+NEXT STEPS:
   1. Rebuild NS-3:
      cd $NS3_ROOT
      ./ns3 clean
@@ -845,9 +845,9 @@ if [ $ISSUES -eq 0 ]; then
      ./ns3 build
 
   2. Test TWT functionality:
-     ./ns3 run "contrib/ai/examples/MobiCom/twt/powercast-twt-demo.cc"
+     ./ns3 run "twt-main-simulation"
 
-🎯 TWT Features Available:
+TWT Features Available:
   - Complete WiFi 6 TWT support
   - ANNOUNCED/UNANNOUNCED modes
   - Individual/Broadcast agreements

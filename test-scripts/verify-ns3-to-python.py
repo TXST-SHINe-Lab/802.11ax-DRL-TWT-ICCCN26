@@ -404,7 +404,7 @@ def main():
         print(f"Error: Log directory not found: {logdir}")
         return 1
 
-    print(f"📁 Log directory: {logdir}\n")
+    print(f"Log directory: {logdir}\n")
 
     # Find all file groups
     file_groups = find_all_file_groups(logdir)

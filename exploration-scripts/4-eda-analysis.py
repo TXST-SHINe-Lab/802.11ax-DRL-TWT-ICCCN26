@@ -362,7 +362,7 @@ def analyze_raw_metrics(data_log_dir: Path, output_dir: Path, make_plots: bool):
     print("RECOMMENDATIONS FOR PPO OBSERVATION")
     print("=" * 70)
 
-    print("\n✅ RECOMMENDED FEATURES (GOOD quality):")
+    print("\n✓ RECOMMENDED FEATURES (GOOD quality):")
     good_realistic = [
         r for r in all_results if r["status"] == "GOOD" and r["category"] == "REALISTIC"
     ]
@@ -381,7 +381,7 @@ def analyze_raw_metrics(data_log_dir: Path, output_dir: Path, make_plots: bool):
         cat = "R" if r["category"] == "REALISTIC" else "O"
         print(f"  [{cat}] {r['display_name']:<40} - {r['reason']}")
 
-    print("\n❌ GARBAGE FEATURES (do NOT use):")
+    print("\n✗ GARBAGE FEATURES (do NOT use):")
     garbage = [r for r in all_results if r["status"] in ["GARBAGE", "CONSTANT"]]
     for r in garbage:
         cat = "R" if r["category"] == "REALISTIC" else "O"

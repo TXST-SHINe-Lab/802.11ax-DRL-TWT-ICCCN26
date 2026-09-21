@@ -73,8 +73,8 @@ cd ../ppo-sb3-scripts
 ### Plot all results
 
 ```bash
-TWT_RUN_ID=run_20260131_010432 python3.11 plot_training.py     # shipped run; omit for a flat layout
-TWT_RUN_ID=run_20260131_010432 python3.11 plot_evaluation.py
+python3.11 plot_training.py   --checkpoints-dir checkpoints/run_20260131_010432   # shipped run → plots/
+python3.11 plot_evaluation.py --eval-dir eval_results/run_20260131_010432
 ```
 
 ---
@@ -247,7 +247,7 @@ python3.11 train_lstm_ppo_V1.py \
 | `--learning-rate`   | 2.5e-4 / 3e-4  | Adam learning rate (LSTM / MLP)          |
 | `--n-steps`         | 128 / 256      | Steps per rollout (LSTM / MLP)           |
 | `--batch-size`      | 64             | Mini-batch size                          |
-| `--normalize-obs`   | off            | Enable `VecNormalize` (running mean/std) |
+| `--normalize-obs`   | on             | `VecNormalize` (running mean/std); disable with `--no-normalize-obs` |
 | `--resume`          | —              | Path to `.zip` checkpoint to resume from |
 | `--output-dir`      | `checkpoints/` | Where to save checkpoints                |
 | `--tensorboard-log` | `tb_logs/`     | TensorBoard log directory                |
@@ -294,7 +294,7 @@ Results are written to `eval_results/<run_id>/eval_<prefix><preset>_<timestamp>.
 ### Training curves
 
 ```bash
-TWT_RUN_ID=run_20260131_010432 python3.11 plot_training.py     # LSTM PPO, all presets (shipped run)
+python3.11 plot_training.py --checkpoints-dir checkpoints/run_20260131_010432   # LSTM PPO, all presets (shipped run)
 python3.11 plot_training.py --preset throughput                # Single preset
 python3.11 plot_training.py --training-script train_ppo_V1.py  # MLP PPO
 ```
@@ -304,7 +304,7 @@ Reads `.jsonl` training logs from the matching checkpoint directories. Generates
 ### Evaluation comparison
 
 ```bash
-TWT_RUN_ID=run_20260131_010432 python3.11 plot_evaluation.py   # LSTM PPO results (shipped run)
+python3.11 plot_evaluation.py --eval-dir eval_results/run_20260131_010432          # LSTM PPO results (shipped run)
 python3.11 plot_evaluation.py --training-script train_ppo_V1.py
 ```
 
@@ -313,7 +313,7 @@ Reads `eval_results/<run_id>/eval_*.json`. Generates bar charts comparing PPO vs
 ### Reward signal diagnosis
 
 ```bash
-TWT_RUN_ID=run_20260131_010432 python3.11 analyze_reward_signal.py    # LSTM PPO reward logs (shipped run)
+python3.11 analyze_reward_signal.py --checkpoints-dir checkpoints/run_20260131_010432   # LSTM PPO reward logs (shipped run)
 ```
 
 Reads `reward_logs/reward_log_*_part*.csv` from checkpoint directories. Generates NORM accuracy charts, z-score distribution plots, and component contribution boxplots.
@@ -325,12 +325,17 @@ Reads `reward_logs/reward_log_*_part*.csv` from checkpoint directories. Generate
 Every artifact root is nested under the run id when `TWT_RUN_ID` is set, which `run_all.sh`
 always does; standalone invocations write to the root directory directly.
 
+> Do not set `TWT_RUN_ID=run_20260131_010432` yourself: every script writes into the run it names,
+> so that would overwrite the shipped plots and constants. To read the shipped run, pass its
+> directory with `--eval-dir` / `--checkpoints-dir` as above; output then lands in the flat
+> `plots/` directory.
+
 ```
 checkpoints/<run_id>/
 ├── lstm_ppo_V1_twt_throughput_20260131_012841/
 │   ├── lstm_ppo_V1_twt_final.zip            # Final trained policy
 │   ├── lstm_ppo_V1_twt_<N>_steps.zip        # Periodic step checkpoints
-│   ├── vecnormalize.pkl                     # VecNormalize stats (if --normalize-obs)
+│   ├── vecnormalize.pkl                     # VecNormalize stats (unless --no-normalize-obs)
 │   ├── hyperparams.json                     # All training hyperparameters
 │   ├── normalization_stats.json             # Obs normalization statistics
 │   ├── training_log_<timestamp>.jsonl       # Per-episode training metrics
@@ -376,7 +381,7 @@ tensorboard --logdir tb_logs
 
 ### Observation Normalization (VecNormalize)
 
-When `--normalize-obs` is passed, SB3's `VecNormalize` wrapper sits between the environment and the policy:
+By default (`--normalize-obs`, on unless `--no-normalize-obs` is given), SB3's `VecNormalize` wrapper sits between the environment and the policy:
 
 ```
 FileCommEnv → DummyVecEnv → VecNormalize → RecurrentPPO / PPO
@@ -392,7 +397,7 @@ FileCommEnv → DummyVecEnv → VecNormalize → RecurrentPPO / PPO
 
 **During evaluation**: `eval_policy.py` auto-detects `vecnormalize.pkl` in the same directory as the model, loads it with `VecNormalize.load()`, freezes the statistics (`training=False`, `norm_reward=False`), and routes observations through the wrapper before passing them to the policy. Analytical and heuristic baselines receive raw observations directly (they do not use `VecNormalize`).
 
-**If `--normalize-obs` is not passed**: No wrapper is applied, no `.pkl` is written, and the policy sees raw sensor values directly. The custom `EnhancedFeatureExtractor` (MLP variant) includes `LayerNorm` inside the network which provides some implicit normalization in this case.
+**With `--no-normalize-obs`**: No wrapper is applied, no `.pkl` is written, and the policy sees raw sensor values directly. The custom `EnhancedFeatureExtractor` (MLP variant) includes `LayerNorm` inside the network which provides some implicit normalization in this case.
 
 ---
 

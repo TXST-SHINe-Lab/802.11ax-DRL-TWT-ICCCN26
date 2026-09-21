@@ -373,18 +373,18 @@ main(int argc, char* argv[])
     CloseTraceFiles();
 
     std::cout << "\n===== TRACE FILES SAVED =====" << std::endl;
-    std::cout << "End-to-end trace: data-log/e2e_trace_" << config.currentsimId_string << ".csv"
+    std::cout << "End-to-end trace: data-log/ns3-e2e-trace-" << config.currentsimId_string << ".csv"
               << std::endl;
     std::cout << "  Complete packet journey with timestamps at each stage" << std::endl;
     std::cout << "  Each packet tracked by UID: STA App → IP → MAC → PHY → AP → Server\n"
               << std::endl;
 
     std::cout << "QoS Metrics traces:" << std::endl;
-    std::cout << "  Queue Size: data-log/queue_size_trace_" << config.currentsimId_string << ".csv"
+    std::cout << "  Queue Size: data-log/ns3-macqueuesize-trace-" << config.currentsimId_string << ".csv"
               << std::endl;
-    std::cout << "  A-MPDU Aggregation: data-log/ampdu_trace_" << config.currentsimId_string
+    std::cout << "  A-MPDU Aggregation: data-log/ns3-ampdu-trace-" << config.currentsimId_string
               << ".csv" << std::endl;
-    std::cout << "  BSR (Buffer Status Report): data-log/bsr_trace_" << config.currentsimId_string
+    std::cout << "  BSR (Buffer Status Report): data-log/ns3-bsr-trace-" << config.currentsimId_string
               << ".csv" << std::endl;
 
     std::cout << "\n\nSimulation with ID " << config.simId << " completed." << std::endl;

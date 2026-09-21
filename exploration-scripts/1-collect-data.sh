@@ -9,11 +9,12 @@
 # Batch data collection for the EDA: runs many NS-3 simulations with random actions to cover the action space.
 # Writes JSONL transitions under eda-data/run_<timestamp>/, which 3-prepare-data.sh then stacks into NPZ.
 #
-# Every parameter below can be overridden from the environment, so no edit is needed for a one-off run.
+# NUM_SPAWNS and BASE_SEED can be overridden from the environment; the other values are recorded
+# in run_config.json for reference only (the spawn count and step length come from twt-constants.h).
 #
 # Usage:
 #     ./1-collect-data.sh
-#     NUM_SPAWNS=50 STEPS_PER_SPAWN=38 ./1-collect-data.sh    # short run
+#     NUM_SPAWNS=50 ./1-collect-data.sh                        # short run
 #     BASE_SEED=99 ./1-collect-data.sh                        # different seed sequence
 
 # set -e is deliberately off: one failed spawn must not abandon the whole collection.

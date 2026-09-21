@@ -53,16 +53,6 @@ METRIC_MAP = {
 # Steps per EDA run
 DEFAULT_STEPS_PER_SPAWN = 38
 
-# Reward center points used when stacked_transitions.npz is absent: the empirical Jain's-index
-# means from the paper's EDA (Sec. III-C), matching the shipped derived_constants.json. These are
-# the values reward_functions.py requires at import, so the fallback output stays loadable.
-FALLBACK_CENTER_STATS = {
-    "jain_bytes_mean": 0.7,
-    "jain_bytes_std": 0.1,
-    "jain_sleep_ratio_mean": 0.8,
-    "jain_sleep_ratio_std": 0.1,
-}
-
 # Beacon intervals per RL decision step; mirrors TWT_UPDATE_INTERVAL_BI in twt-constants.h.
 # Keep the two in sync.
 BI_PER_DECISION_STEP = 20
@@ -170,11 +160,8 @@ def load_center_stats(run_dir: Path) -> dict:
     """EDA-tuned reward center points: the empirical means the paper cites."""
     npz_path = run_dir / "stacked_transitions.npz"
     if not npz_path.exists():
-        print(
-            f"WARNING: {npz_path.name} not found; using the paper's hard-coded reward centers "
-            f"(FALLBACK_CENTER_STATS)"
-        )
-        return dict(FALLBACK_CENTER_STATS)
+        print(f"WARNING: {npz_path.name} not found; reward centers cannot be derived")
+        return {}
 
     with np.load(npz_path) as z:
         n_feat, n_sta = check_npz_schema(z["states"], npz_path)
@@ -395,6 +382,15 @@ def main() -> None:
     run_dir = (
         Path(args.run_dir) if args.run_dir else find_latest_run(Path(args.eda_data_dir))
     )
+    npz_path = run_dir / "stacked_transitions.npz"
+    if not npz_path.exists():
+        print(
+            f"ERROR: {npz_path} not found; constants can only be derived from a stacked EDA run. "
+            f"Nothing written. Run 3-prepare-data.sh for this run, or use the existing "
+            f"derived_constants.json.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     analysis_path = run_dir / "metric_quality_analysis.json"
     print(f"[5-dial-constants] Reading {analysis_path}")
     by_column = load_analysis(analysis_path)

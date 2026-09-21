@@ -318,7 +318,7 @@ The sinks here accumulate data into global arrays indexed by STA ID; `TwtMetrics
 Values come from `twt-constants.h`.
 Each PHY-state-change callback multiplies the time spent in the previous state by its mA value and accumulates into `current_mA_TimesTime_ms_ForSta_TI`.
 
-**Trace files written to disk** (when `enableStateLogs = true`):
+**Trace files written to disk** (always; the `enableStateLogs` flag is parsed but unused):
 
 | File                       | Contents                      |
 | -------------------------- | ----------------------------- |
@@ -476,14 +476,14 @@ Wires together all components and drives the simulation loop.
 
 | Argument           | Default   | Description                                 |
 | ------------------ | --------- | ------------------------------------------- |
-| `simId`            | 0         | Simulation ID (used for output file naming) |
-| `randSeed`         | 1         | Random seed for reproducibility             |
+| `simId`            | 10001     | Simulation ID (used for output file naming) |
+| `randSeed`         | 9000      | Random seed for reproducibility             |
 | `parallelSim`      | false     | Parsed but unused; see `--segmentName` etc. |
-| `scenario`         | "default" | Scenario tag (affects traffic)              |
+| `scenario`         | "ns3UnilateralTwt" | Scenario tag (affects traffic)     |
 | `nStations`        | 16        | Number of STAs                              |
 | `simulationTime`   | computed  | Total simulation duration (ms)              |
-| `p2pLinkDelay`     | 5         | AP backhaul delay (ms)                      |
-| `enableStateLogs`  | false     | Write PHY/MAC trace files to disk           |
+| `p2pLinkDelay`     | 0         | AP backhaul delay (ms)                      |
+| `enableStateLogs`  | false     | Parsed but unused; trace files are always written |
 | `enablePcap`       | false     | Write PCAP capture files                    |
 | `enableDynamicTWT` | true      | Enable periodic TWT updates                 |
 

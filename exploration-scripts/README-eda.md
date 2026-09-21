@@ -197,11 +197,10 @@ python 5-dial-constants.py                      # freshest run, default output p
 python 5-dial-constants.py --output <path>      # write elsewhere
 ```
 
-> **Expects `stacked_transitions.npz` in the run directory** (produced by step 3). Without it the
-> delta statistics fall back to a rough ramp estimate and the reward centers fall back to the
-> paper's hard-coded values (`FALLBACK_CENTER_STATS`): the output stays loadable but is not
-> EDA-derived, and it overwrites that run's `derived_constants.json`. The shipped
-> `run_20260131_010432/` does not include the NPZ, so do not run this step against it.
+> **Requires `stacked_transitions.npz` in the run directory** (produced by step 3); without it the
+> script exits with an error and writes nothing. There is no fallback anywhere: the training and
+> evaluation scripts load the newest `eda-data/run_*/derived_constants.json` (or the run named by
+> `TWT_RUN_ID`) and fail if it is missing. The repo ships the file for `run_20260131_010432/`.
 
 #### `2-validate-logvstap.py`
 
@@ -217,7 +216,7 @@ by C++ matches what the Python wrapper received and what ended up in the JSONL.
 python 2-validate-logvstap.py \
     --jsonl eda-data/run_<timestamp>/transitions/spawn_0.jsonl
 # The matching wrapper CSV is located from the JSONL metadata; pass --csv <file> to override,
-# or --dir eda-data/run_<timestamp> to validate every spawn in a run.
+# or --dir eda-data/run_<timestamp>/transitions to validate every spawn in a run (or --dir eda-data for all runs).
 ```
 
 ---

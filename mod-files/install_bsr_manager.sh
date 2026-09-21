@@ -204,7 +204,7 @@ echo -e "${GREEN}========================================${NC}\n"
 
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Rebuild NS-3: ${GREEN}./ns3 build${NC}"
-echo "  2. Test with: ${GREEN}./ns3 run \"wns3-unilateral-twt --simId=10008\"${NC}"
+echo "  2. Test with: ${GREEN}./ns3 run \"twt-main-simulation\"${NC}"
 echo ""
 echo -e "${YELLOW}Backup files created:${NC}"
 [ -f "$WIFI_CMAKE.backup" ] && echo "  - $WIFI_CMAKE.backup"

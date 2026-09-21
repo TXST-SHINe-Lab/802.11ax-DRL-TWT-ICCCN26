@@ -31,7 +31,7 @@ This directory contains the PPO (Proximal Policy Optimization) reinforcement lea
 | `plot_evaluation.py`       | Policy comparison bar charts from `eval_results/*.json`         |
 | `analyze_reward_signal.py` | NORM constant validation from reward log CSVs                   |
 | `run_training.sh`          | Run all three presets through the default training script       |
-| `run_eval.sh`              | Run PPO + Analytical evaluation for all presets                 |
+| `run_eval.sh`              | Evaluate PPO vs Random, Heuristic and Analytical, all presets   |
 | `../run_all.sh`            | End-to-end pipeline: NS-3 build → EDA → train → eval → plot     |
 
 ---
@@ -73,8 +73,8 @@ cd ../ppo-sb3-scripts
 ### Plot all results
 
 ```bash
-python3.11 plot_training.py
-python3.11 plot_evaluation.py
+TWT_RUN_ID=run_20260131_010432 python3.11 plot_training.py     # shipped run; omit for a flat layout
+TWT_RUN_ID=run_20260131_010432 python3.11 plot_evaluation.py
 ```
 
 ---
@@ -259,26 +259,26 @@ python3.11 train_lstm_ppo_V1.py \
 ### Using the shell script
 
 ```bash
-./run_eval.sh                           # All presets, LSTM PPO vs Analytical
+./run_eval.sh                           # All presets, LSTM PPO vs Random/Heuristic/Analytical
 ./run_eval.sh throughput energy         # Specific presets only
 ./run_eval.sh --training-script train_ppo_V1.py   # MLP PPO variant
 ```
 
-The script sets `INCLUDE_ANALYTICAL=true` and `N_EPISODES=50` by default.
+The script sets `INCLUDE_RANDOM`, `INCLUDE_HEURISTIC`, `INCLUDE_ANALYTICAL` to `true` and `N_EPISODES=50` by default.
 
 ### Direct Python invocation
 
 ```bash
 # Compare LSTM PPO vs Analytical for throughput preset
 python3.11 eval_policy.py \
-    checkpoints/run_20260131_010432/lstm_ppo_V1_twt_throughput_20260131_012841/ \
+    checkpoints/run_20260131_010432/lstm_ppo_V1_twt_throughput_20260131_012841/lstm_ppo_V1_twt_final.zip \
     --n-episodes 10 \
     --reward-type throughput \
     --compare-analytical throughput
 
 # Compare against all analytical variants
 python3.11 eval_policy.py \
-    checkpoints/run_20260131_010432/ppo_V1_twt_throughput_20260202_013615/ \
+    checkpoints/run_20260131_010432/ppo_V1_twt_throughput_20260202_013615/ppo_V1_twt_final.zip \
     --n-episodes 5 \
     --reward-type throughput \
     --compare-analytical throughput energy queue \
@@ -294,7 +294,7 @@ Results are written to `eval_results/<run_id>/eval_<prefix><preset>_<timestamp>.
 ### Training curves
 
 ```bash
-python3.11 plot_training.py                                    # LSTM PPO, all presets
+TWT_RUN_ID=run_20260131_010432 python3.11 plot_training.py     # LSTM PPO, all presets (shipped run)
 python3.11 plot_training.py --preset throughput                # Single preset
 python3.11 plot_training.py --training-script train_ppo_V1.py  # MLP PPO
 ```
@@ -304,7 +304,7 @@ Reads `.jsonl` training logs from the matching checkpoint directories. Generates
 ### Evaluation comparison
 
 ```bash
-python3.11 plot_evaluation.py                                  # LSTM PPO results
+TWT_RUN_ID=run_20260131_010432 python3.11 plot_evaluation.py   # LSTM PPO results (shipped run)
 python3.11 plot_evaluation.py --training-script train_ppo_V1.py
 ```
 
@@ -313,7 +313,7 @@ Reads `eval_results/<run_id>/eval_*.json`. Generates bar charts comparing PPO vs
 ### Reward signal diagnosis
 
 ```bash
-python3.11 analyze_reward_signal.py    # LSTM PPO reward logs
+TWT_RUN_ID=run_20260131_010432 python3.11 analyze_reward_signal.py    # LSTM PPO reward logs (shipped run)
 ```
 
 Reads `reward_logs/reward_log_*_part*.csv` from checkpoint directories. Generates NORM accuracy charts, z-score distribution plots, and component contribution boxplots.

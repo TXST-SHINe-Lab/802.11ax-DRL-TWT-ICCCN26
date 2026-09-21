@@ -17,7 +17,7 @@ Every policy in a run is scored under the same --reward-type, so the numbers are
 PPO alone runs when no --compare flag is given; run_eval.sh drives the usual suite across all three presets.
 
 Usage:
-    python3.11 eval_policy.py checkpoints/ppo_twt_*/ppo_twt_final.zip
+    python3.11 eval_policy.py checkpoints/<run_id>/ppo_V1_twt_*/ppo_V1_twt_final.zip
     python3.11 eval_policy.py --policy random --n-episodes 10
     python3.11 eval_policy.py model.zip --compare-heuristic throughput
     python3.11 eval_policy.py model.zip --compare-analytical queue --reward-type queue

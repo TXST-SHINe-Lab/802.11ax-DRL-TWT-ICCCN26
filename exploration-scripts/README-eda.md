@@ -1,7 +1,7 @@
 # TWT RL Exploration Scripts
 
 This directory contains scripts for **Exploratory Data Analysis (EDA)** and offline data
-collection for the TWT (Target Wake Time) scheduling RL environment. Running thousands of
+collection for the TWT (Target Wake Time) scheduling RL environment. Running many
 random-action simulations here provides the dataset used to study the action space, validate
 metric flows, and calibrate reward normalization constants before training.
 
@@ -102,16 +102,13 @@ under a timestamped `eda-data/run_<YYYYMMDD_HHMMSS>/` directory.
 ./1-collect-data.sh
 
 # Override any parameter via environment variable:
-NUM_SPAWNS=50 NUM_STAS=8 STEPS_PER_SPAWN=200 BASE_SEED=42 ./1-collect-data.sh
+NUM_SPAWNS=50 BASE_SEED=42 ./1-collect-data.sh
 ```
 
 | Variable          | Default                | Description                           |
 | ----------------- | ---------------------- | ------------------------------------- |
 | `NUM_SPAWNS`      | 1275                   | Number of sequential NS-3 runs        |
-| `NUM_STAS`        | from `twt-constants.h` | STAs per simulation                   |
-| `STEPS_PER_SPAWN` | 38                     | Max RL steps per run                  |
 | `BASE_SEED`       | 42                     | Starting seed (incremented per spawn) |
-| `CONFIG_FILE`     | _(none)_               | Optional JSON config override         |
 
 ---
 
@@ -200,6 +197,12 @@ python 5-dial-constants.py                      # freshest run, default output p
 python 5-dial-constants.py --output <path>      # write elsewhere
 ```
 
+> **Expects `stacked_transitions.npz` in the run directory** (produced by step 3). Without it the
+> delta statistics fall back to a rough ramp estimate and the reward centers fall back to the
+> paper's hard-coded values (`FALLBACK_CENTER_STATS`): the output stays loadable but is not
+> EDA-derived, and it overwrites that run's `derived_constants.json`. The shipped
+> `run_20260131_010432/` does not include the NPZ, so do not run this step against it.
+
 #### `2-validate-logvstap.py`
 
 Cross-validates a single spawn's JSONL file against the NS-3 wrapper CSV logs
@@ -212,8 +215,9 @@ by C++ matches what the Python wrapper received and what ended up in the JSONL.
 
 ```bash
 python 2-validate-logvstap.py \
-    --jsonl eda-data/run_<timestamp>/transitions/spawn_0.jsonl \
-    --data-log-dir ../data-log
+    --jsonl eda-data/run_<timestamp>/transitions/spawn_0.jsonl
+# The matching wrapper CSV is located from the JSONL metadata; pass --csv <file> to override,
+# or --dir eda-data/run_<timestamp> to validate every spawn in a run.
 ```
 
 ---
@@ -297,7 +301,7 @@ After `stack-data.py` the arrays in `stacked_transitions.npz` are:
 | Array           | Shape    | Dtype   | Description                                   |
 | --------------- | -------- | ------- | --------------------------------------------- |
 | `states`        | (N, 432) | float32 | Flattened per-STA features, padded to 16 STAs |
-| `next_states`   | (N, 368) | float32 | Same for next step                            |
+| `next_states`   | (N, 432) | float32 | Same for next step                            |
 | `actions`       | (N, 2)   | int32   | `[schedule_idx, assignment_idx]`              |
 | `num_stas`      | (N, )    | int32   | Actual STA count (before padding)             |
 | `spawn_indices` | (N, )    | int32   | Episode index                                 |
@@ -321,6 +325,6 @@ python generate_action_tables.py --output-dir .
 python 4-eda-analysis.py \
     --npz-file eda-data/$(ls eda-data | sort -r | head -1)/stacked_transitions.npz
 
-# 5. Dial reward normalization constants from this EDA
+# 5. Dial reward normalization constants from this EDA (needs step 3's stacked_transitions.npz)
 python 5-dial-constants.py
 ```

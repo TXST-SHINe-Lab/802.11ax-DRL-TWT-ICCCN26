@@ -20,7 +20,7 @@ Features:
 
 Usage:
     python3.11 train_ppo_V1.py --total-timesteps 100000 --seed 42
-    python3.11 train_ppo_V1.py --resume checkpoints/ppo_V1_twt_best.zip
+    python3.11 train_ppo_V1.py --resume checkpoints/<run_id>/ppo_V1_twt_<preset>_<timestamp>/ppo_V1_twt_final.zip
 
 Lab: SHINE Lab, Texas State University
 """

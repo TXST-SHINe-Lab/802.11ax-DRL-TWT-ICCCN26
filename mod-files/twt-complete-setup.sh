@@ -715,12 +715,14 @@ if [ -f "$CMAKE_FILE" ]; then
         print_info "Adding TWT files to CMakeLists.txt..."
 
         # Add source file
-        sed -i '/model\/wifi-.*\.cc/a\
-    model/wifi-twt-agreement.cc' "$CMAKE_FILE"
+        sed -i '0,/model\/wifi-.*\.cc/{/model\/wifi-.*\.cc/a\
+    model/wifi-twt-agreement.cc
+}' "$CMAKE_FILE"
 
         # Add header file
-        sed -i '/model\/wifi-.*\.h/a\
-    model/wifi-twt-agreement.h' "$CMAKE_FILE"
+        sed -i '0,/model\/wifi-.*\.h/{/model\/wifi-.*\.h/a\
+    model/wifi-twt-agreement.h
+}' "$CMAKE_FILE"
 
         print_success "Added TWT files to CMakeLists.txt"
     fi

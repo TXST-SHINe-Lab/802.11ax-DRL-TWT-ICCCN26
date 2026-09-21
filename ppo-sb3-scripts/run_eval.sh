@@ -10,7 +10,7 @@
 # SHINE Lab, Texas State University.
 #
 # Every policy within a preset is evaluated under that preset's reward function, so the scores are comparable.
-# Defaults run PPO and the analytical policy; the random and heuristic baselines are off, so their --skip flags only matter after INCLUDE_RANDOM or INCLUDE_HEURISTIC is turned on below.
+# Defaults run PPO against the random, heuristic and analytical baselines; set INCLUDE_RANDOM / INCLUDE_HEURISTIC to false below to drop the extra baselines.
 #
 # Usage:
 #     ./run_eval.sh                                        # all presets
@@ -27,8 +27,8 @@ cd "$SCRIPT_DIR"
 # --- Configuration, edit these to customise evaluation ---
 N_EPISODES=50
 SEED=1000000000         # Fixed for reproducibility, well clear of the training seed
-INCLUDE_RANDOM=true     # Random baseline, off by default
-INCLUDE_HEURISTIC=true  # Preset-matched heuristic policies, off by default
+INCLUDE_RANDOM=true     # Random baseline
+INCLUDE_HEURISTIC=true  # Preset-matched heuristic policies
 INCLUDE_ANALYTICAL=true # Analytical model-based policies
 CLEAN_OLD=false         # true wipes this run's eval_results/ before running
 
@@ -320,7 +320,7 @@ echo ""
 if [ ${#SUCCESSFUL_PRESETS[@]} -gt 0 ]; then
     echo "Result files saved in $EVAL_DIR/"
     for PRESET in "${SUCCESSFUL_PRESETS[@]}"; do
-        RESULT_FILE=$(ls -t "$EVAL_DIR"/eval_${PRESET}_*.json 2>/dev/null | head -1)
+        RESULT_FILE=$(ls -t "$EVAL_DIR"/eval_${CHECKPOINT_PATTERN}${PRESET}_*.json 2>/dev/null | head -1)
         if [ -n "$RESULT_FILE" ]; then
             echo "  $PRESET: $RESULT_FILE"
         fi

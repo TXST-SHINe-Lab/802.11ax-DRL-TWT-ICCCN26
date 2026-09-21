@@ -114,7 +114,7 @@ main(int argc, char* argv[])
     std::string lockableName = "My Lockable";
 
     // --- Single source of truth: number of STAs ---
-    // Number of active STAs is initialized in TwtSimulationConfig constructor with DEFAULT_NUM_STA
+    // Number of active STAs is initialized in TwtSimulationConfig constructor with ACTIVE_NUM_STA
     // Can be overridden by --nStations command line argument
     // This value propagates to:
     //   1. Node creation: TwtNetworkSetup::CreateNodes() uses m_config.nStations
@@ -123,8 +123,8 @@ main(int argc, char* argv[])
     //   3. Python controller: Reads env_dict["num_sta"] and echoes it back in
     //   action_dict["num_sta"]
     //   4. TWT application: Uses action.num_sta to iterate over STAs when applying schedules
-    // Note: nStations is now initialized in TwtSimulationConfig constructor (pb-twt-core.h:
-    // DEFAULT_NUM_STA = 5)
+    // Note: nStations is initialized in TwtSimulationConfig constructor from ACTIVE_NUM_STA
+    // (twt-constants.h)
 
     std::cout << "setting up command line" << std::endl;
     CommandLine cmd(__FILE__);

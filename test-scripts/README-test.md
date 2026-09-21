@@ -186,7 +186,7 @@ call-level overlays and vertical markers at each TWT config-update point.
 | `ns3-BI-log-*.csv`      | Primary BI-level data                                                                         |
 | `ns3-call-log-*.csv`    | Call-level overlay (window averages / snapshots)                                              |
 | `ns3-twt-wrapper-*.csv` | Config-update BI indices for vertical markers                                                 |
-| `../../twt-constants.h` | Parsed at runtime for `BEACON_INTERVAL_MS`, `TWT_UPDATE_INTERVAL_BI`, `TWT_UPDATE_START_BI` |
+| `../twt-constants.h` | Parsed at runtime for `BEACON_INTERVAL_MS`, `TWT_UPDATE_INTERVAL_BI`, `TWT_UPDATE_START_BI` |
 
 **Important**: All `oracle_*` columns in `ns3-BI-log-*.csv` are **cumulative**.
 The script computes `.diff()` per STA before plotting so every y-axis shows a
@@ -349,7 +349,7 @@ by matching timestamp suffixes.
   `verify-ns3-to-python.py` replace it with `NaN` before computing statistics.
 
 - **`twt-constants.h` auto-parsed**: `plot-bi-metrics.py` reads
-  `../../twt-constants.h` at runtime with a regex to extract
+  `../twt-constants.h` at runtime with a regex to extract
   `BEACON_INTERVAL_MS`, `TWT_UPDATE_INTERVAL_BI`, and `TWT_UPDATE_START_BI`.
   If the header file moves, update the `parse_twt_constants()` search path.
 

@@ -271,7 +271,7 @@ Both the simulation and the Python bindings include this single header.
 
 **`StaApplicationConfig` struct** — per-STA application parameters: data rate (kbps), packet size (bytes), inter-packet interval (ms), start/stop times, device class, QoS user priority, delay bound, and mean data rate for TSPEC.
 
-**`TwtSimulationConfig` struct** — top-level simulation knobs: `simId`, `randSeed`, `parallelSim` (for concurrent multi-seed runs), `nStations`, `simulationTime_ms`, `p2pLinkDelay_ms`, `enableStateLogs`, `enablePcap`, `beaconInterval_s`.
+**`TwtSimulationConfig` struct** — top-level simulation knobs: `simId`, `randSeed`, `parallelSim` (accepted but currently unused; segment names come from the `--segmentName`/`--cpp2pyMsgName`/`--py2cppMsgName`/`--lockableName` arguments) (for concurrent multi-seed runs), `nStations`, `simulationTime_ms`, `p2pLinkDelay_ms`, `enableStateLogs`, `enablePcap`, `beaconInterval_s`.
 
 **`TwtNetworkSetup` class** — orchestrates:
 
@@ -279,7 +279,7 @@ Both the simulation and the Python bindings include this single header.
 1. WiFi 802.11ax HE channel + PHY setup
 1. MAC association and application installation per device class
 1. Mobility model placement
-1. `ApplyTWTSchedule(const ActionStruct& action)` — iterates each STA, looks up its `StaGroupAssignment`, reads the corresponding `TwtGroupConfig`, and calls the NS-3 TWT API (`SetUnsolicitedTwtSchedule`) to set wake interval, duration, and service-period offset. STAs marked `enable_twt = false` have TWT disabled (normal EDCA).
+1. `ApplyTWTSchedule(const ActionStruct& action)` — iterates each STA, looks up its `StaGroupAssignment`, reads the corresponding `TwtGroupConfig`, and calls the NS-3 TWT API (`SetTwtSchedule`) to set wake interval, duration, and service-period offset. STAs marked `enable_twt = false` have TWT disabled (normal EDCA).
 
 ---
 
@@ -478,7 +478,7 @@ Wires together all components and drives the simulation loop.
 | ------------------ | --------- | ------------------------------------------- |
 | `simId`            | 0         | Simulation ID (used for output file naming) |
 | `randSeed`         | 1         | Random seed for reproducibility             |
-| `parallelSim`      | false     | Enables unique shared-memory segment names  |
+| `parallelSim`      | false     | Parsed but unused; see `--segmentName` etc. |
 | `scenario`         | "default" | Scenario tag (affects traffic)              |
 | `nStations`        | 16        | Number of STAs                              |
 | `simulationTime`   | computed  | Total simulation duration (ms)              |
@@ -491,7 +491,7 @@ Wires together all components and drives the simulation loop.
 
 1. Parse command-line args → populate `TwtSimulationConfig`
 1. Create `TwtNetworkSetup` → build topology, install apps
-1. Call `ConnectTraceCallbacks()` → hook all PHY/MAC/App trace sources
+1. Call `ConnectSummaryTraces()`, `ConnectQosMetricTraces()`, `ConnectPhyStateTraces()`, `ConnectTimeoutAndDropTraces()` → hook all PHY/MAC/App trace sources
 1. Schedule `PeriodicBiLevelLogging()` at `METRICS_START_TIME_BI` (called every BI thereafter via self-reschedule)
 1. Schedule `PeriodicTWTUpdate()` at `TWT_UPDATE_START_BI` (called every `TWT_UPDATE_INTERVAL_BI` BIs for `DURATION_IN_UPDATE` steps)
 1. `Simulator::Run()` — simulation runs until all events are consumed
@@ -523,9 +523,9 @@ Here is the complete path from a hardware event to a Python observation field:
 ```
 1. PHY state changes (e.g., STA wakes for its TWT SP)
       │
-      └─ WifiPhy::TraceConnectWithoutContext("State", PhyStateCallback)
+      └─ WifiPhy::TraceConnectWithoutContext("State", PhyStateTrace_inPlace)
               │
-              PhyStateCallback(staId, start, duration, newState)
+              PhyStateTrace_inPlace(staId, start, duration, newState)
                   │
                   currentModel = TI_currentModel_mA[prevState]
                   current_mA_TimesTime_ms_ForSta_TI[staId] += currentModel × durationMs
@@ -534,9 +534,9 @@ Here is the complete path from a hardware event to a Python observation field:
 
 2. STA sends uplink data (A-MPDU transmitted)
       │
-      └─ WifiMac::TraceConnectWithoutContext("AmpduTx", AmpduTxCallback)
+      └─ WifiMac::TraceConnectWithoutContext("AmpduTx", AmpduAggregationTrace)
               │
-              AmpduTxCallback(staId, nMpdus, bytes, txVector)
+              AmpduAggregationTrace(staId, nMpdus, bytes, txVector)
                   packetsTransmittedByPhyForSta[staId] += nMpdus
                   bytesTransmittedByPhyForSta[staId]   += bytes
 
@@ -549,7 +549,7 @@ Here is the complete path from a hardware event to a Python observation field:
 
 4. MPDU drop (timeout or queue full)
       │
-      └─ WifiMac::TraceConnectWithoutContext("DroppedMpdu", DroppedMpduCallback)
+      └─ WifiMac::TraceConnectWithoutContext("DroppedMpdu", MpduDropped_atSta)
               │
               uplinkExpiredMpduForSta[staId]++   (if DropReason == LIFETIME)
               uplinkFailedEnqueueMpduForSta[staId]++  (if DropReason == QUEUE_FULL)
@@ -598,7 +598,7 @@ The IPC layer uses the **ns3-ai** module's `Ns3AiMsgInterfaceImpl` template, whi
 | `MyCpp2PyMsg_<id>` | C++ → Python | `EnvStruct` (~8 KB)        |
 | `MyPy2CppMsg_<id>` | Python → C++ | `ActionStruct` (~0.5 KB)   |
 
-The `<id>` suffix is derived from `simId` when `parallelSim = true`, allowing multiple simulation instances to run concurrently (used in multi-seed training).
+The `<id>` suffix is the seed, passed explicitly via `--segmentName`, `--cpp2pyMsgName`, `--py2cppMsgName`, `--lockableName` (the `parallelSim` flag is parsed but unused), allowing multiple simulation instances to run concurrently (used in multi-seed training).
 
 **Synchronization**: Each segment has an associated lockable object (`MyLockable_<id>`).
 The protocol is strictly alternating:
@@ -786,7 +786,7 @@ Covers the lowest-level smoke tests that verify the simulation binary, the IPC b
 
 After the unit tests pass, use this pipeline to build intuition about the state and action spaces before training.
 
-- Runs the simulation hundreds of times with random TWT assignments and policies, collecting BI-level metric logs.
+- Runs the simulation many times with random TWT assignments and policies, collecting BI-level metric logs.
 - Validates the logs, stacks them, and computes statistical summaries (correlation matrices, feature distributions, pairwise scatter plots).
 - The resulting EDA data and plots reveal which features are most informative for which reward objective — critical context for reward function design.
 

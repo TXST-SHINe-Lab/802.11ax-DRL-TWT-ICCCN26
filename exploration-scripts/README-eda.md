@@ -185,9 +185,8 @@ python 4-eda-analysis.py \
 
 #### `5-dial-constants.py`
 
-Derives the reward `NORM` z-score table (per-metric mean, std, max) from the freshest EDA run and
-writes it next to that run's data. `reward_functions.py` and `analytical_policies.py` load the file
-at import and refuse to import until this step has run, so a failure here aborts the pipeline.
+Derives the reward `NORM` z-score table (per-metric mean, std, max) from the freshest EDA run and writes it next to that run's data.
+`reward_functions.py` and `analytical_policies.py` load the file at import and refuse to import until this step has run, so a failure here aborts the pipeline.
 
 - **Input**: `eda-data/<run_id>/stacked_transitions.npz`
 - **Output**: `eda-data/<run_id>/derived_constants.json`
@@ -197,10 +196,9 @@ python 5-dial-constants.py                      # freshest run, default output p
 python 5-dial-constants.py --output <path>      # write elsewhere
 ```
 
-> **Requires `stacked_transitions.npz` in the run directory** (produced by step 3); without it the
-> script exits with an error and writes nothing. There is no fallback anywhere: the training and
-> evaluation scripts load the newest `eda-data/run_*/derived_constants.json` (or the run named by
-> `TWT_RUN_ID`) and fail if it is missing. The repo ships the file for `run_20260131_010432/`.
+> **Requires `stacked_transitions.npz` in the run directory** (produced by step 3); without it the script exits with an error and writes nothing.
+> There is no fallback anywhere: the training and evaluation scripts load the newest `eda-data/run_*/derived_constants.json` (or the run named by `TWT_RUN_ID`) and fail if it is missing.
+> The repo ships the file for `run_20260131_010432/`.
 
 #### `2-validate-logvstap.py`
 
@@ -215,8 +213,8 @@ by C++ matches what the Python wrapper received and what ended up in the JSONL.
 ```bash
 python 2-validate-logvstap.py \
     --jsonl eda-data/run_<timestamp>/transitions/spawn_0.jsonl
-# The matching wrapper CSV is located from the JSONL metadata; pass --csv <file> to override,
-# or --dir eda-data/run_<timestamp>/transitions to validate every spawn in a run (or --dir eda-data for all runs).
+# The matching wrapper CSV is located from the JSONL metadata; pass --csv <file> to override.
+# Pass --dir eda-data/run_<timestamp>/transitions to validate every spawn in a run, or --dir eda-data for all runs.
 ```
 
 ---

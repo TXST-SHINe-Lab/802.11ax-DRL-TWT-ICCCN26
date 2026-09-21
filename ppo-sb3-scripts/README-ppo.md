@@ -322,13 +322,10 @@ Reads `reward_logs/reward_log_*_part*.csv` from checkpoint directories. Generate
 
 ## Output Structure
 
-Every artifact root is nested under the run id when `TWT_RUN_ID` is set, which `run_all.sh`
-always does; standalone invocations write to the root directory directly.
+Every artifact root is nested under the run id when `TWT_RUN_ID` is set, which `run_all.sh` always does; standalone invocations write to the root directory directly.
 
-> Do not set `TWT_RUN_ID=run_20260131_010432` yourself: every script writes into the run it names,
-> so that would overwrite the shipped plots and constants. To read the shipped run, pass its
-> directory with `--eval-dir` / `--checkpoints-dir` as above; output then lands in the flat
-> `plots/` directory.
+> Do not set `TWT_RUN_ID=run_20260131_010432` yourself: every script writes into the run it names, so that would overwrite the shipped plots and constants.
+> To read the shipped run, pass its directory with `--eval-dir` / `--checkpoints-dir` as above; output then lands in the flat `plots/` directory.
 
 ```
 checkpoints/<run_id>/

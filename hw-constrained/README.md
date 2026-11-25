@@ -98,14 +98,18 @@ rebuild, and pass `--epoch-s 10` to every script below (proposal, Section 4).
 
 The reward z-scores come from `derived_constants.json`. The existing file was dialed for
 16 STAs and 2 s epochs, so the reward would saturate in the new setting. Re-run the ICCCN'26
-EDA with legal actions only:
+EDA with legal actions only. `run_eda.sh` runs Ahmed's steps 1, 3, 4 and 5 unchanged, but with
+the simulations in parallel (his `1-collect-data.sh` runs them one at a time, about a day for
+1,275 spawns), starts spaced 3 s apart so no two share a log file name, and the EDA's logs kept
+in its own run directory:
 
 ```bash
-cd ../exploration-scripts
-TWT_HW_LEGAL_ONLY=1 NUM_SPAWNS=<n> ./1-collect-data.sh
-./3-prepare-data.sh && python 4-eda-analysis.py && python 5-dial-constants.py   # 5 needs 4's output
-export TWT_DERIVED_CONSTANTS=$PWD/eda-data/<run_id>/derived_constants.json
+NUM_SPAWNS=20 JOBS=10 hw-constrained/run_eda.sh   # quick test
+JOBS=10 hw-constrained/run_eda.sh                 # full run, prints the export line below
+export TWT_DERIVED_CONSTANTS=<twt>/exploration-scripts/eda-data/<run_id>/derived_constants.json
 ```
+
+Run it alone; it refuses to start while another simulation is running.
 
 Every training log prints the constants file it loaded, so check the path.
 

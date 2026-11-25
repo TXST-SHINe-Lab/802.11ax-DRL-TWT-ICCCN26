@@ -18,6 +18,7 @@ import argparse
 import json
 import os
 import sys
+import time
 
 import numpy as np
 
@@ -56,6 +57,7 @@ def main(argv=None):
     rows = []
     try:
         for i, seed in enumerate(seedplan.obs_stats_seeds(args.episodes)):
+            t0 = time.monotonic()
             env.reset(seed=seed)
             n = env.num_sta
             rows.append(env.last_raw_obs.reshape(-1, PER_STA_FEATURES)[:n])
@@ -64,7 +66,10 @@ def main(argv=None):
                 _, _, term, trunc, _ = env.step(policy.act(None, env))
                 rows.append(env.last_raw_obs.reshape(-1, PER_STA_FEATURES)[:n])
                 done = term or trunc
-            print(f"episode {i + 1}/{args.episodes} (seed {seed}) done")
+            took = time.monotonic() - t0
+            per_epoch = took / (args.num_epochs + args.warmup_steps)
+            print(f"episode {i + 1}/{args.episodes} (seed {seed}) done in {took:.0f} s "
+                  f"= {per_epoch:.1f} s per epoch (incl. ns-3 start-up)", flush=True)
     finally:
         env.close()
 

@@ -20,7 +20,7 @@ simulation, file protocol, reward function and action tables unchanged.
 | `launch_final.sh` | The 20 final runs (10 seeds × 2 agents). Resumable. |
 | `seeds.py` | Disjoint ns-3 seed ranges for sweep, training, observation stats, learning curves and the 50 test episodes. |
 | `policies.py`, `evaluation.py` | One `act()` interface and one episode loop for every policy, used by training-time evaluation and by later baseline comparisons. |
-| `ns3-patch/apply_hw_patch.py` | Puts ns-3 in the bench configuration: 5 STAs (4 sensors + 1 steady stream), epoch length, episode length, legal-only EDA sampling. |
+| `ns3-patch/apply_hw_patch.py` | Puts ns-3 in the bench configuration: 5 STAs (4 sensors + 1 steady stream), epoch length, episode length, legal-only EDA sampling, and a fix so the AP's received-packet counter works. |
 | `testing/mock_ns3_runner.py` | **Test only.** A toy stand-in for ns-3 that speaks the same file protocol. Never report numbers from it. |
 | `tests/` | 27 tests. |
 
@@ -40,11 +40,16 @@ mock runner standing in for ns-3:
 
 **Not checked:**
 
-- The C++ part of `apply_hw_patch.py` has **not been compiled**. The patch was applied and
-  reverted on a copy and the diff reviewed, but ns-3 is not built here. The first build on
-  your machine is the real test.
-- No ns-3 episode has been run with this code, so step time, the right `--step-timeout`, and
-  whether 25 s epochs fit in 12 h per run are unknown until step 2 below.
+- The bench-mix C++ compiled and ran on ns-3.44 (Ubuntu, GCC 15): one 22-epoch episode printed
+  `HaLow bench mix: 4 sensors + 1 stream`. The sniffer fix below is not yet compiled.
+- That first episode found two problems, both fixed:
+  1. `packets_received_at_ap` was always 0. ns-3.44 passes each A-MPDU subframe to
+     MonitorSnifferRx with its 4-byte subframe header in front, and the published
+     `ApMonitorSnifferRxTrace` reads the MAC header from byte 0, so every HE data frame failed
+     the STA lookup. `apply_hw_patch.py` now strips the subframe header (twt-trace-callbacks.cc).
+  2. ns-3 outlived the episode. `ns3ai_utils` starts it in its own process group, so killing
+     the runner's group missed it; `hw_env._kill_process` now kills all descendants.
+- Step time per epoch is still to be measured with the fixed build.
 - The public repo has the training logs of the published policy but **not the model files**
   (`*_final.zip` and `vecnormalize.pkl`). You need these from Ahmed for baseline (4), the
   clipped ICCCN'26 policy.

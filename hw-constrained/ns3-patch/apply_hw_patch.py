@@ -22,6 +22,10 @@ What it changes (every file is backed up to <file>.orig the first time; --revert
       stream rate  = HW_STREAM_RATE_KBPS x U[1 - j, 1]   (never above the measured cap)
     Positions were already re-randomized per episode by the original code.
 
+  twt-trace-callbacks.cc  ApMonitorSnifferRxTrace()
+    Bug fix: strip the 4-byte A-MPDU subframe header before reading the MAC header. Without
+    it every HE data frame fails the STA lookup and packets_received_at_ap is always 0.
+
   exploration-scripts/run-single-spawn.py
     With TWT_HW_LEGAL_ONLY=1 the EDA's random actions skip illegal schedules, so the reward
     constants are dialed under the same action space the agents train in.
@@ -88,6 +92,24 @@ CPP_BLOCK = """    sta_app_configs.clear();
 """
 
 
+# Sniffer fix. In ns-3.44, WifiPhy::NotifyMonitorSniffRx hands each MPDU of an A-MPDU (and HE
+# sends every data frame as an A-MPDU or S-MPDU) to MonitorSnifferRx as
+# WifiPsdu::GetAmpduSubframe(i), which starts with the 4-byte A-MPDU subframe header. The
+# published ApMonitorSnifferRxTrace peeks a WifiMacHeader straight from byte 0, reads a wrong
+# transmitter address, fails the STA lookup and returns. So no data frame is ever counted and
+# packets_received_at_ap / bytes_received_at_ap stay 0. Strip the subframe header first.
+TRACE_ANCHOR = "        Ptr<Packet> pktCopy = packet->Copy();\n        pktCopy->PeekHeader(hdr);\n"
+TRACE_BLOCK = """        Ptr<Packet> pktCopy = packet->Copy();
+        if (aMpdu.type != NORMAL_MPDU)
+        {{
+            // {mark}: A-MPDU subframes start with a 4-byte subframe header, not the MAC header
+            AmpduSubframeHeader subframeHdr;
+            pktCopy->RemoveHeader(subframeHdr);
+        }}
+        pktCopy->PeekHeader(hdr);
+"""
+
+
 def read(path):
     with open(path) as f:
         return f.read()
@@ -139,6 +161,14 @@ def patch_config_cc(text):
     return text.replace(CPP_ANCHOR, CPP_BLOCK.format(mark=MARK), 1)
 
 
+def patch_trace_cc(text):
+    if MARK in text:
+        return text
+    if text.count(TRACE_ANCHOR) != 1:
+        raise SystemExit("twt-trace-callbacks.cc: sniffer anchor (pktCopy->PeekHeader(hdr)) not found exactly once")
+    return text.replace(TRACE_ANCHOR, TRACE_BLOCK.format(mark=MARK), 1)
+
+
 def patch_spawn(text):
     old = "            schedule_idx = random.randint(0, num_schedules - 1)\n"
     if MARK in text:
@@ -175,6 +205,7 @@ def main(argv=None):
     files = {
         "const": os.path.join(a.twt_dir, "twt-constants.h"),
         "cc": os.path.join(a.twt_dir, "twt-simulation-config.cc"),
+        "trace": os.path.join(a.twt_dir, "twt-trace-callbacks.cc"),
         "spawn": os.path.join(a.twt_dir, "exploration-scripts", "run-single-spawn.py"),
         "dial": os.path.join(a.twt_dir, "exploration-scripts", "5-dial-constants.py"),
         "collect": os.path.join(a.twt_dir, "exploration-scripts", "1-collect-data.sh"),
@@ -196,6 +227,7 @@ def main(argv=None):
     # Compute every edit first; write only if all anchors were found.
     const_txt, bi, cycles = patch_constants(read(files["const"]), a)
     cc_txt = patch_config_cc(read(files["cc"]))
+    trace_txt = patch_trace_cc(read(files["trace"]))
     spawn_txt = patch_spawn(read(files["spawn"]))
     dial_txt, n = re.subn(r"^BI_PER_DECISION_STEP = \d+.*$",
                           f"BI_PER_DECISION_STEP = {bi}  # {MARK}: follows TWT_UPDATE_INTERVAL_BI",
@@ -213,6 +245,7 @@ def main(argv=None):
           f"{cycles} update cycles, stream cap {a.stream_rate_kbps} kbps, jitter {a.rate_jitter}")
     backup_and_write(files["const"], const_txt, a.dry_run)
     backup_and_write(files["cc"], cc_txt, a.dry_run)
+    backup_and_write(files["trace"], trace_txt, a.dry_run)
     backup_and_write(files["spawn"], spawn_txt, a.dry_run)
     backup_and_write(files["dial"], dial_txt, a.dry_run)
     backup_and_write(files["collect"], collect_txt, a.dry_run)

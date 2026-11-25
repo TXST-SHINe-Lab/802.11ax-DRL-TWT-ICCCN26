@@ -240,12 +240,36 @@ class HwConstrainedTWTEnv(FileCommEnv):
         removal is a harmless no-op.
         """
         if self.current_process is not None:
+            # ns3ai_utils.Experiment starts ns-3 with preexec_fn=os.setpgrp, so the simulator sits
+            # in its own process group and killpg() on the runner's group misses it. A SIGTERM'd
+            # runner also skips Experiment.__del__, so ns-3 would be orphaned, keep running, and
+            # hold stdout open (a piped `| tee` then never returns). Collect every descendant
+            # before killing anything, while they are still reachable through the runner.
+            descendants = []
+            try:
+                import psutil  # ns3-ai itself depends on psutil
+
+                descendants = psutil.Process(self.current_process.pid).children(recursive=True)
+            except Exception:  # noqa: BLE001
+                pass
             try:
                 os.killpg(os.getpgid(self.current_process.pid), 15)
                 self.current_process.wait(timeout=5)
             except Exception:  # noqa: BLE001
                 try:
                     os.killpg(os.getpgid(self.current_process.pid), 9)
+                except Exception:  # noqa: BLE001
+                    pass
+            for p in descendants:
+                try:
+                    p.terminate()
+                except Exception:  # noqa: BLE001
+                    pass
+            if descendants:
+                try:
+                    _, alive = psutil.wait_procs(descendants, timeout=5)
+                    for p in alive:
+                        p.kill()
                 except Exception:  # noqa: BLE001
                     pass
             self.current_process = None

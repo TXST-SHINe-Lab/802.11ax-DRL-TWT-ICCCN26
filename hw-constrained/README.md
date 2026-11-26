@@ -19,10 +19,14 @@ simulation, file protocol, reward function and action tables unchanged.
 | `launch_sweep.sh`, `summarize_sweep.py` | Learning-rate sweep (3 LRs × 3 seeds × 2 agents) and LR choice. |
 | `launch_final.sh` | The 20 final runs (10 seeds × 2 agents). Resumable. |
 | `seeds.py` | Disjoint ns-3 seed ranges for sweep, training, observation stats, learning curves and the 50 test episodes. |
-| `policies.py`, `evaluation.py` | One `act()` interface and one episode loop for every policy, used by training-time evaluation and by later baseline comparisons. |
+| `policies.py`, `evaluation.py` | One `act()` interface and one episode loop for every policy: the trained agents, fixed schedules, the M/D/1 scheduler of [5] (legal actions only) and the published MLP-PPO (its own simulator observation, illegal actions clipped). |
+| `evaluate.py` | Runs any set of policies on a seed set (50 test, 10 eval-curve, fixed-search), 6 episodes at a time. Resumable. |
+| `best_fixed.py` | Best fixed legal schedule: all 342 legal actions (141 distinct for 5 STAs) on 3 search seeds, then the top 10 on 10 new seeds. |
+| `analyze.py` | Every ns-3 table, the learning-curve figure, IQM with bootstrap CIs, probability of improvement, sample efficiency, consistency, the H1 verdict and the run to take to the bench. |
+| `run_eda.sh` | Ahmed's EDA (steps 1, 3, 4, 5) in parallel, for the bench reward constants. |
 | `ns3-patch/apply_hw_patch.py` | Puts ns-3 in the bench configuration: 5 STAs (4 sensors + 1 steady stream), epoch length, episode length, legal-only EDA sampling, and a fix so the AP's received-packet counter works. |
 | `testing/mock_ns3_runner.py` | **Test only.** A toy stand-in for ns-3 that speaks the same file protocol. Never report numbers from it. |
-| `tests/` | 27 tests. |
+| `tests/` | 32 tests. |
 
 ## What has and has not been checked
 
@@ -122,11 +126,29 @@ python collect_obs_stats.py --episodes 30 --out obs_stats.json
 ### 5. Learning-rate sweep, then the final runs
 
 ```bash
-JOBS=2 ./launch_sweep.sh       # 18 runs of 3000 steps; writes sweep_choice.json
-JOBS=2 ./launch_final.sh       # 20 runs of 15000 steps; re-run to resume
+JOBS=6 PY=python ./launch_sweep.sh    # 18 runs of 3000 steps; writes sweep_choice.json
+JOBS=6 PY=python ./launch_final.sh    # 20 runs of 15000 steps; re-run to resume
 ```
 
-`JOBS` is how many runs go at once; each ns-3 simulation uses one core.
+`JOBS` is how many runs go at once: one per physical core (each run is one ns-3 process).
+
+### 6. Baselines and the test evaluation (proposal, Sections 3.1 and 4)
+
+The published model files are not in the public repo; put Ahmed's MLP-PPO energy-preset
+`model_final.zip` and `vecnormalize.pkl` in `published/`.
+
+```bash
+python best_fixed.py --jobs 6                                  # ~2 h, writes results/best_fixed.json
+python evaluate.py --seeds test --jobs 6 --out results/test.jsonl \
+    --policy "runs:runs/*_seed*[0-9]" --policy best-fixed --policy md1 \
+    --policy published:published/model_final.zip               # 23 policies x 50 episodes, ~4 h
+python evaluate.py --seeds eval-curve --jobs 6 --out results/eval_curve_baselines.jsonl \
+    --policy best-fixed --policy md1 --policy published:published/model_final.zip
+python analyze.py                                              # results/report/summary.md
+```
+
+The M/D/1 policy reads its queueing constants from `TWT_DERIVED_CONSTANTS`, so keep that
+exported. Every command resumes if interrupted.
 
 ## Outputs
 

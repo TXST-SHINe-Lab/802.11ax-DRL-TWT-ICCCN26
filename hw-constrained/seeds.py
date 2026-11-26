@@ -6,6 +6,8 @@ Five disjoint ns-3 seed ranges, so no episode is ever used for two purposes:
   obs_stats    random-policy episodes that fit the observation z-score
   sweep        learning-rate sweep runs            SWEEP_BASE + (run_seed - 100) * SPAN + episode
   train        final 10-seed training runs         TRAIN_BASE + run_seed * SPAN + episode
+  fixed_search episodes on which all 342 legal fixed actions are simulated to pick the best
+               fixed schedule (proposal, Section 3.1); training-distribution traffic, own range
   eval_curve   10 fixed episodes for the learning curves, identical for every run
   test         50 held-out episodes for the final comparison (H1), never seen in training
 
@@ -16,6 +18,7 @@ B+1, B+2, ... A 15k-step run has 750 episodes, far below SPAN, so ranges never o
 SPAN = 10_000
 SWEEP_BASE = 1_000_000
 TRAIN_BASE = 2_000_000
+FIXED_SEARCH_BASE = 6_000_000
 OBS_STATS_BASE = 7_000_000
 EVAL_CURVE_BASE = 8_000_000
 TEST_BASE = 9_000_000
@@ -50,3 +53,7 @@ def test_seeds(n: int = N_TEST):
 
 def obs_stats_seeds(n: int):
     return [OBS_STATS_BASE + i for i in range(n)]
+
+
+def fixed_search_seeds(n: int, start: int = 0):
+    return [FIXED_SEARCH_BASE + i for i in range(start, start + n)]

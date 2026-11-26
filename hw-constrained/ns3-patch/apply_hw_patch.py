@@ -25,6 +25,10 @@ What it changes (every file is backed up to <file>.orig the first time; --revert
   twt-trace-callbacks.cc  ApMonitorSnifferRxTrace()
     Bug fix: strip the 4-byte A-MPDU subframe header before reading the MAC header. Without
     it every HE data frame fails the STA lookup and packets_received_at_ap is always 0.
+  twt-trace-callbacks.cc  OpenTraceFiles()
+    The six per-packet trace CSVs (~100 MB per episode) stay closed unless TWT_HW_TRACES=1.
+    Training and the EDA never read them; Ahmed's test-scripts/ validation does, so set
+    TWT_HW_TRACES=1 when running those.
 
   exploration-scripts/run-single-spawn.py
     With TWT_HW_LEGAL_ONLY=1 the EDA's random actions skip illegal schedules, so the reward
@@ -161,12 +165,41 @@ def patch_config_cc(text):
     return text.replace(CPP_ANCHOR, CPP_BLOCK.format(mark=MARK), 1)
 
 
+# Per-packet trace CSVs. OpenTraceFiles() opens six CSVs (end-to-end packet journey, MAC queue
+# size, A-MPDU, BSR, PHY state, tx/rx stats) that log every packet event: about 100 MB per
+# 25 s x 24-epoch episode, i.e. terabytes over the project, and the disk writes slow parallel
+# runs down. Only Ahmed's validation scripts read them; training and the EDA do not (the agent's
+# data comes through shared memory). With the files left closed, every write to them is a no-op.
+OPEN_TRACES_ANCHOR = "OpenTraceFiles(std::string simIdString)\n{\n"
+OPEN_TRACES_BLOCK = """OpenTraceFiles(std::string simIdString)
+{{
+    {{
+        // {mark}: per-packet trace CSVs are off unless TWT_HW_TRACES=1 (about 100 MB per
+        // episode; only the validation scripts in test-scripts/ read them)
+        const char* keepTraces = std::getenv("TWT_HW_TRACES");
+        if (!(keepTraces && std::string(keepTraces) == "1"))
+        {{
+            std::cout << "[{mark}] per-packet trace CSVs disabled (TWT_HW_TRACES=1 keeps them)"
+                      << std::endl;
+            return;
+        }}
+    }}
+"""
+INCLUDE_ANCHOR = "#include <cmath>\n"
+
+
 def patch_trace_cc(text):
-    if MARK in text:
-        return text
-    if text.count(TRACE_ANCHOR) != 1:
-        raise SystemExit("twt-trace-callbacks.cc: sniffer anchor (pktCopy->PeekHeader(hdr)) not found exactly once")
-    return text.replace(TRACE_ANCHOR, TRACE_BLOCK.format(mark=MARK), 1)
+    # Each edit is checked on its own, so re-running on an older patched file adds only what is new.
+    if "A-MPDU subframes start" not in text:
+        if text.count(TRACE_ANCHOR) != 1:
+            raise SystemExit("twt-trace-callbacks.cc: sniffer anchor (pktCopy->PeekHeader(hdr)) not found exactly once")
+        text = text.replace(TRACE_ANCHOR, TRACE_BLOCK.format(mark=MARK), 1)
+    if "TWT_HW_TRACES" not in text:
+        if text.count(OPEN_TRACES_ANCHOR) != 1 or text.count(INCLUDE_ANCHOR) != 1:
+            raise SystemExit("twt-trace-callbacks.cc: OpenTraceFiles or '#include <cmath>' anchor not found exactly once")
+        text = text.replace(OPEN_TRACES_ANCHOR, OPEN_TRACES_BLOCK.format(mark=MARK), 1)
+        text = text.replace(INCLUDE_ANCHOR, INCLUDE_ANCHOR + "#include <cstdlib> // " + MARK + ": std::getenv\n", 1)
+    return text
 
 
 def patch_spawn(text):

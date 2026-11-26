@@ -231,6 +231,9 @@ def main(argv=None):
                    f"95% CI [{better['return_ci'][0]:.3f}, {better['return_ci'][1]:.3f}]. Published policy mean "
                    f"return {pub['return_iqm']:.3f}. H1 needs the CI's lower bound above the published mean: "
                    f"**{verdict}**.\n"]
+        else:
+            md += ["## H1\n", "No verdict yet: the published policy is not in the test results. Evaluate it "
+                   "with `evaluate.py --seeds test --policy published:<model_final.zip>` and re-run analyze.py.\n"]
         stats["h1"] = h1
         algo = "mlp" if better["policy"] == AGENTS["mlp"] else "lstm"
         sc = run_scores[algo]

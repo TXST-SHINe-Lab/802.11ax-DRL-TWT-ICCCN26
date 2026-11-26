@@ -10,6 +10,18 @@ The ICCCN'26 runner is reused unchanged except for two patched module attributes
   * read_action: the original waits 60 s for the next action; with 25 s epochs and an LSTM on
     a laptop CPU that is cut too fine, so the wait comes from --action-timeout.
 
+Two process-level fixes, both needed only because runs now go in parallel:
+
+  * Shared-memory names. pb_twt_wrapper_py.TWTWrapper.reset names the ns3-ai segments
+    MySeg_<seed>, ... and first deletes any segment with that name. Parallel training runs all
+    evaluate on the same 10 eval-curve seeds, at the same step counts, so two simulations with
+    one seed would share (and delete) each other's segments. With TWT_SHM_TAG set (hw_env sets
+    it to the parent's pid), reset() is re-created from its own source with the tag appended
+    to the four names. Nothing else in it changes, and it stops if the source does not match.
+  * ns-3 output. ns3ai_utils.run_single_ns3 pipes ns-3's stdout/stderr to the runner when
+    show_output is False and nothing ever reads the pipe; a full pipe (64 KB) would block ns-3.
+    With TWT_NS3_LOG set, that output goes to the file instead (one per episode, in comm_dir).
+
 Usage is identical to the original runner, plus --action-timeout (seconds).
 """
 
@@ -42,6 +54,60 @@ def _read_action_long(comm_dir, timeout=60.0):
 
 efr.build_action_dict = _legal_build_action_dict
 efr.read_action = _read_action_long
+
+_SHM_NAME_FSTRINGS = ('f"MySeg_{seed}"', 'f"MyCpp2PyMsg_{seed}"', 'f"MyPy2CppMsg_{seed}"', 'f"MyLockable_{seed}"')
+
+
+def tag_shm_names(tag: str) -> None:
+    """Re-create TWTWrapper.reset with '_<tag>' appended to its four shared-memory names."""
+    import inspect
+    import textwrap
+
+    import pb_twt_wrapper_py as ptw
+
+    src = textwrap.dedent(inspect.getsource(ptw.TWTWrapper.reset))
+    for name in _SHM_NAME_FSTRINGS:
+        if src.count(name) != 1:
+            raise RuntimeError(f"TWTWrapper.reset: expected {name} exactly once; the wrapper changed")
+        src = src.replace(name, name[:-1] + '_{_HW_SHM_TAG}"', 1)
+    namespace = dict(vars(ptw))
+    namespace["_HW_SHM_TAG"] = tag
+    exec(compile(src, ptw.__file__, "exec"), namespace)  # noqa: S102  (its own source, 4 names changed)
+    ptw.TWTWrapper.reset = namespace["reset"]
+
+
+def log_ns3_output(log_path: str) -> None:
+    """Send ns-3's output to log_path instead of an unread pipe (see the module docstring)."""
+    import subprocess
+
+    import ns3ai_utils
+
+    original = ns3ai_utils.run_single_ns3
+
+    def run_single_ns3(path, pname, setting=None, env=None, show_output=False):
+        if show_output:
+            return original(path, pname, setting=setting, env=env, show_output=True)
+        # Same command and environment as ns3ai_utils.run_single_ns3, output to a file.
+        env = dict(env or {})
+        env.update(os.environ)
+        env["LD_LIBRARY_PATH"] = os.path.abspath(os.path.join(path, "build", "lib"))
+        exec_path = os.path.join(path, "ns3")
+        if not setting:
+            cmd = "{} run {}".format(exec_path, pname)
+        else:
+            cmd = "{} run {} --{}".format(exec_path, pname, ns3ai_utils.get_setting(setting))
+        out = open(log_path, "w")
+        proc = subprocess.Popen(cmd, shell=True, text=True, env=env, stdin=subprocess.PIPE,
+                                stdout=out, stderr=subprocess.STDOUT, preexec_fn=os.setpgrp)
+        return cmd, proc
+
+    ns3ai_utils.run_single_ns3 = run_single_ns3
+
+
+if os.environ.get("TWT_SHM_TAG"):
+    tag_shm_names(os.environ["TWT_SHM_TAG"])
+if os.environ.get("TWT_NS3_LOG"):
+    log_ns3_output(os.environ["TWT_NS3_LOG"])
 
 
 def main():

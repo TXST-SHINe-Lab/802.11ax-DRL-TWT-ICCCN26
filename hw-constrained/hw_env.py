@@ -101,6 +101,7 @@ class HwConstrainedTWTEnv(FileCommEnv):
         self.num_sta = 0
         self.epoch = 0
         self.clipped_actions = 0  # Only ever non-zero with illegal_action="clip"
+        self.shm_tag = f"p{os.getpid()}"  # appended to the ns3-ai segment names (hw_episode_runner)
         self.last_raw_obs: Optional[np.ndarray] = None
         self._episode_metrics: Dict[str, float] = {}
 
@@ -275,7 +276,8 @@ class HwConstrainedTWTEnv(FileCommEnv):
             self.current_process = None
         seed = getattr(self, "current_seed", None)
         if seed is not None:
-            for name in (f"MySeg_{seed}", f"MyCpp2PyMsg_{seed}", f"MyPy2CppMsg_{seed}", f"MyLockable_{seed}"):
+            tag = f"{seed}_{self.shm_tag}"  # hw_episode_runner appends the tag to every name
+            for name in (f"MySeg_{tag}", f"MyCpp2PyMsg_{tag}", f"MyPy2CppMsg_{tag}", f"MyLockable_{tag}"):
                 path = os.path.join("/dev/shm", name)
                 try:
                     if os.path.exists(path):
@@ -302,8 +304,13 @@ class HwConstrainedTWTEnv(FileCommEnv):
             cmd.append("--verbose")
 
         try:
+            # Shared-memory names carry this process's pid as well as the seed, so parallel
+            # runs evaluating on the same seed never touch each other's segments.
+            child_env = dict(os.environ, TWT_SHM_TAG=self.shm_tag,
+                             TWT_NS3_LOG=os.path.join(self.comm_dir, "ns3_output.log"))
             self.current_process = subprocess.Popen(
                 cmd,
+                env=child_env,
                 stdout=None if self.verbose else subprocess.DEVNULL,
                 stderr=None if self.verbose else subprocess.DEVNULL,
                 preexec_fn=os.setsid,

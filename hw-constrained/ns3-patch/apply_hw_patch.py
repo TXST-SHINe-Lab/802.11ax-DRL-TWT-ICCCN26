@@ -29,6 +29,9 @@ What it changes (every file is backed up to <file>.orig the first time; --revert
     The six per-packet trace CSVs (~100 MB per episode) stay closed unless TWT_HW_TRACES=1.
     Training and the EDA never read them; Ahmed's test-scripts/ validation does, so set
     TWT_HW_TRACES=1 when running those.
+  twt-metrics.cc  BI-level / call-level / fallback CSVs
+    Opened on /dev/null unless TWT_HW_TRACES=1 (a few MB per episode). Not switched off,
+    because LogBiLevelMetrics() also accumulates BSR statistics; only the output is dropped.
 
   exploration-scripts/run-single-spawn.py
     With TWT_HW_LEGAL_ONLY=1 the EDA's random actions skip illegal schedules, so the reward
@@ -188,6 +191,45 @@ OPEN_TRACES_BLOCK = """OpenTraceFiles(std::string simIdString)
 INCLUDE_ANCHOR = "#include <cmath>\n"
 
 
+# Per-episode metric logs (twt-metrics.cc). The BI-level and call-level CSVs are a few MB per
+# episode, about 100 GB over all training episodes. They cannot simply be switched off:
+# LogBiLevelMetrics() also accumulates the BSR occupancy statistics. So the files are opened on
+# /dev/null instead, and the code runs exactly as before with the output thrown away.
+METRICS_NS_ANCHOR = "namespace ns3\n{\n"
+METRICS_HELPER = """namespace ns3
+{{
+
+// {mark}: metric CSVs go to /dev/null unless TWT_HW_TRACES=1 (the computations are unchanged)
+static std::string
+HwLogPath(const std::string& path)
+{{
+    const char* keep = std::getenv("TWT_HW_TRACES");
+    return (keep && std::string(keep) == "1") ? path : std::string("/dev/null");
+}}
+"""
+METRICS_OPENS = (
+    ("    m_biLevelCsv.open(biLevelFile, std::ios::app);\n",
+     "    m_biLevelCsv.open(HwLogPath(biLevelFile), std::ios::app);\n"),
+    ("    m_callLevelCsv.open(callLevelFile, std::ios::app);\n",
+     "    m_callLevelCsv.open(HwLogPath(callLevelFile), std::ios::app);\n"),
+    ("    m_fallbackCsv.open(fallbackFile, std::ios::app);\n",
+     "    m_fallbackCsv.open(HwLogPath(fallbackFile), std::ios::app);\n"),
+)
+
+
+def patch_metrics_cc(text):
+    if "HwLogPath" in text:
+        return text
+    anchors = [METRICS_NS_ANCHOR, INCLUDE_ANCHOR] + [old for old, _ in METRICS_OPENS]
+    if any(text.count(a) != 1 for a in anchors):
+        raise SystemExit("twt-metrics.cc: a log anchor (namespace / #include <cmath> / CSV open) not found exactly once")
+    text = text.replace(METRICS_NS_ANCHOR, METRICS_HELPER.format(mark=MARK), 1)
+    text = text.replace(INCLUDE_ANCHOR, INCLUDE_ANCHOR + "#include <cstdlib> // " + MARK + ": std::getenv\n", 1)
+    for old, new in METRICS_OPENS:
+        text = text.replace(old, new, 1)
+    return text
+
+
 def patch_trace_cc(text):
     # Each edit is checked on its own, so re-running on an older patched file adds only what is new.
     if "A-MPDU subframes start" not in text:
@@ -239,6 +281,7 @@ def main(argv=None):
         "const": os.path.join(a.twt_dir, "twt-constants.h"),
         "cc": os.path.join(a.twt_dir, "twt-simulation-config.cc"),
         "trace": os.path.join(a.twt_dir, "twt-trace-callbacks.cc"),
+        "metrics": os.path.join(a.twt_dir, "twt-metrics.cc"),
         "spawn": os.path.join(a.twt_dir, "exploration-scripts", "run-single-spawn.py"),
         "dial": os.path.join(a.twt_dir, "exploration-scripts", "5-dial-constants.py"),
         "collect": os.path.join(a.twt_dir, "exploration-scripts", "1-collect-data.sh"),
@@ -261,6 +304,7 @@ def main(argv=None):
     const_txt, bi, cycles = patch_constants(read(files["const"]), a)
     cc_txt = patch_config_cc(read(files["cc"]))
     trace_txt = patch_trace_cc(read(files["trace"]))
+    metrics_txt = patch_metrics_cc(read(files["metrics"]))
     spawn_txt = patch_spawn(read(files["spawn"]))
     dial_txt, n = re.subn(r"^BI_PER_DECISION_STEP = \d+.*$",
                           f"BI_PER_DECISION_STEP = {bi}  # {MARK}: follows TWT_UPDATE_INTERVAL_BI",
@@ -279,6 +323,7 @@ def main(argv=None):
     backup_and_write(files["const"], const_txt, a.dry_run)
     backup_and_write(files["cc"], cc_txt, a.dry_run)
     backup_and_write(files["trace"], trace_txt, a.dry_run)
+    backup_and_write(files["metrics"], metrics_txt, a.dry_run)
     backup_and_write(files["spawn"], spawn_txt, a.dry_run)
     backup_and_write(files["dial"], dial_txt, a.dry_run)
     backup_and_write(files["collect"], collect_txt, a.dry_run)

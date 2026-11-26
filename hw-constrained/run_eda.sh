@@ -12,8 +12,11 @@
 # ns3-patch/apply_hw_patch.py).
 #
 # Usage (from anywhere, EHRL venv active, bench patch applied and ns-3 rebuilt):
-#     NUM_SPAWNS=20 JOBS=10 hw-constrained/run_eda.sh      # quick test (~3 min)
-#     JOBS=10 hw-constrained/run_eda.sh                    # full run (1275 spawns)
+#     NUM_SPAWNS=20 JOBS=6 hw-constrained/run_eda.sh       # quick test (~5 min)
+#     JOBS=6 hw-constrained/run_eda.sh                     # full run (1275 spawns)
+#
+# JOBS: one per PHYSICAL core. On a 6-core / 12-thread CPU, 10 jobs made every spawn 2x slower
+# (136 s vs 68 s), so hyper-threads add almost nothing.
 #
 # Run it ALONE: like 1-collect-data.sh it must not share the machine with training, and it
 # refuses to start if any twt-main-simulation is running.
@@ -34,7 +37,7 @@ EXP="$TWT_DIR/exploration-scripts"
 DATA_LOG="$TWT_DIR/data-log"
 
 NUM_SPAWNS=${NUM_SPAWNS:-1275}
-JOBS=${JOBS:-10}
+JOBS=${JOBS:-6}
 BASE_SEED=${BASE_SEED:-42}
 STAGGER_S=${STAGGER_S:-3}
 SPAWN_TIMEOUT=${SPAWN_TIMEOUT:-900}

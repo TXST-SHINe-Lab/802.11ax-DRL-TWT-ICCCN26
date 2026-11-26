@@ -3,7 +3,7 @@
 # Seeds 101-103 are reserved for the sweep and never reused in the final runs.
 #
 #   ./launch_sweep.sh                      # sequential
-#   JOBS=2 ./launch_sweep.sh               # two runs at a time
+#   JOBS=6 ./launch_sweep.sh               # six runs at a time (one per physical core)
 #   LRS="1e-4 3e-4 1e-3" STEPS=3000 ./launch_sweep.sh
 #   EXTRA="--mock" STEPS=200 ./launch_sweep.sh   # smoke test without ns-3
 set -euo pipefail

@@ -4,7 +4,7 @@
 # Runs that already have model_final.zip are skipped, so the script can be re-run to resume.
 #
 #   ./launch_final.sh                       # sequential, both agents
-#   JOBS=2 ./launch_final.sh                # two runs at a time
+#   JOBS=6 ./launch_final.sh                # six runs at a time (one per physical core)
 #   ALGOS=lstm SEEDS="1 2 3" ./launch_final.sh
 #   STEPS=15000 EXTRA="--step-timeout 1800" ./launch_final.sh
 set -euo pipefail

@@ -306,7 +306,9 @@ def parse_args(argv=None):
 
 def main(argv=None):
     args = parse_args(argv)
-    th.set_num_threads(max(1, min(4, os.cpu_count() or 1)))
+    # One torch thread per run: runs go in parallel, one per physical core, and each also has an
+    # ns-3 process. Extra threads would only fight over the same cores. Override: TWT_TORCH_THREADS.
+    th.set_num_threads(max(1, int(os.environ.get("TWT_TORCH_THREADS", "1"))))
 
     run_name = f"{args.algo}_lr{args.learning_rate:g}_seed{args.seed}" + ("_sweep" if args.purpose == "sweep" else "")
     run_dir = os.path.join(args.out_dir, run_name)

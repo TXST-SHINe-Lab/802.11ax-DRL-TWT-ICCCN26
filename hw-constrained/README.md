@@ -104,8 +104,8 @@ the simulations in parallel (his `1-collect-data.sh` runs them one at a time, ab
 in its own run directory:
 
 ```bash
-NUM_SPAWNS=20 JOBS=10 hw-constrained/run_eda.sh   # quick test
-JOBS=10 hw-constrained/run_eda.sh                 # full run, prints the export line below
+NUM_SPAWNS=20 JOBS=6 hw-constrained/run_eda.sh    # quick test
+JOBS=6 hw-constrained/run_eda.sh                  # full run, prints the export line below
 export TWT_DERIVED_CONSTANTS=<twt>/exploration-scripts/eda-data/<run_id>/derived_constants.json
 ```
 

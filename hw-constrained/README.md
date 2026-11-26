@@ -170,3 +170,17 @@ Each run writes to `runs/<algo>_lr<lr>_seed<seed>/`:
   ICCCN'26 ("running VecNorm on top of EDA norm"). `--no-vecnorm` turns the second off.
 - **What the policy sees:** evaluation rows include ground-truth energy, bytes and drops for
   scoring only. The policy never sees them.
+
+## Published policy (H1 baseline)
+
+The public repository has the published runs' hyperparameters, training logs and observation
+statistics, but not the trained weights. `repro/reproduce_published.sh` re-trains the published
+energy-preset MLP-PPO with Ahmed's own `train_ppo_V1.py` and the published hyperparameters
+(seed 1, 15,000 steps) on his original 16-STA simulator, built in a separate copy of ns-3
+(`<ns-3.44>-orig`), then compares the learning curve and observation statistics with the
+published logs (`repro/compare_repro.py`). The model lands in `published/mlp/`, which
+`evaluate.py --policy published:published/mlp/model_final.zip` reads.
+
+`repro/repro_train.py` runs the trainer unchanged except that an episode cleans up only its own
+shared memory (the original runs `rm -f /dev/shm/My*`, which would break any other simulation on
+the machine), so the reproduction can run next to the bench training.

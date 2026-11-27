@@ -98,10 +98,18 @@ cp "$HERE"/repro_train.py "$HERE"/compare_repro.py "$CTWT/hw-constrained/repro/"
 
 # ---- 3. train ---------------------------------------------------------------------------
 # FileCommEnv spawns its runner as "python3.11"; point that name at this venv's interpreter.
+# A launcher script, not a symlink: Python finds its venv from the path it is started by, so a
+# symlink in another folder would start the bare system Python, without numpy, torch or ns3-ai.
 SHIM="$COPY/.py311-shim"
 mkdir -p "$SHIM"
-ln -sf "$PY" "$SHIM/python3.11"
+rm -f "$SHIM/python3.11"
+printf '#!/bin/sh\nexec "%s" "$@"\n' "$PY" > "$SHIM/python3.11"
+chmod +x "$SHIM/python3.11"
 export PATH="$SHIM:$PATH"
+python3.11 -c "import numpy, torch, stable_baselines3" 2>/dev/null ||
+    die "python3.11 on PATH ($SHIM/python3.11) cannot import numpy/torch/stable_baselines3"
+(cd "$CTWT" && python3.11 -c "import pb_twt_interface_py") ||
+    die "python3.11 cannot import the copy's pb_twt_interface_py"
 # Ahmed's reward constants (16 STAs), the ones the published runs used.
 export TWT_DERIVED_CONSTANTS="$CTWT/exploration-scripts/eda-data/run_20260131_010432/derived_constants.json"
 [ -f "$TWT_DERIVED_CONSTANTS" ] || die "missing $TWT_DERIVED_CONSTANTS"

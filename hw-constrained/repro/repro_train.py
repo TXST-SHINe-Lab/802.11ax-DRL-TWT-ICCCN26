@@ -92,6 +92,19 @@ def main():
 
     file_comm_env.FileCommEnv._kill_process = _kill_process
 
+    # FileCommEnv.reset() answers three failed simulator starts with an all-zero observation and
+    # trains on. A reproduction must never learn from that, so stop instead.
+    original_reset = file_comm_env.FileCommEnv.reset
+
+    def reset(self, *args, **kwargs):
+        obs, info = original_reset(self, *args, **kwargs)
+        if info.get("error") == "spawn_failed":
+            raise RuntimeError(f"the simulator failed to start 3 times (seed {self.current_seed}); "
+                               "run the episode runner by hand to see why")
+        return obs, info
+
+    file_comm_env.FileCommEnv.reset = reset
+
     module = "train_ppo_V1" if algo == "mlp" else "train_lstm_ppo_V1"
     trainer = __import__(module)
     sys.argv = [f"{module}.py"] + train_args

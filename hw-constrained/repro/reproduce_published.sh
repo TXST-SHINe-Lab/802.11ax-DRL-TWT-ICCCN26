@@ -73,18 +73,25 @@ grep -q "EE7331-HW-PATCH" "$CTWT/twt-constants.h" && die "the copy still has the
 grep -q "define ACTIVE_NUM_STA 16" "$CTWT/twt-constants.h" || die "the copy is not the 16-STA original"
 log "Copy OK: original 16-STA simulator in $COPY"
 
-# ---- 2. build the simulator and the Python bridge in the copy ----------------------------
+# ---- 2. build the copy -------------------------------------------------------------------
+# A FULL build, not just the simulator target: ns3-ai starts every episode with `./ns3 run`,
+# which first brings the whole build up to date (with all cores). Anything left unbuilt would be
+# compiled at the first episode, taking longer than the runner's 120 s start-up window.
 SO="$CTWT/pb_twt_interface_py.so"
 BIN="$COPY/build/contrib/ai/examples/twt/ns3.44-twt-main-simulation-default"
-if [ ! -f "$SO" ] || [ ! -x "$BIN" ]; then
-    log "Configuring and building the copy (twt-main-simulation + Python bridge, $BUILD_JOBS jobs)"
+DONE_MARK="$COPY/.repro-full-build-done"
+if [ ! -f "$DONE_MARK" ] || [ ! -f "$SO" ] || [ ! -x "$BIN" ]; then
     cd "$COPY"
-    ./ns3 configure --enable-examples -- -DPython3_EXECUTABLE="$PY" > "$COPY/configure.log" 2>&1 ||
-        die "configure failed; see $COPY/configure.log"
-    ./ns3 build -j "$BUILD_JOBS" twt-main-simulation > "$COPY/build.log" 2>&1 ||
-        die "build failed; see $COPY/build.log"
-    cmake --build cmake-cache -j "$BUILD_JOBS" --target pb_twt_interface_py >> "$COPY/build.log" 2>&1 ||
-        die "Python bridge build failed; see $COPY/build.log"
+    if [ ! -f "$COPY/cmake-cache/CMakeCache.txt" ]; then
+        log "Configuring the copy"
+        ./ns3 configure --enable-examples -- -DPython3_EXECUTABLE="$PY" > "$COPY/configure.log" 2>&1 ||
+            die "configure failed; see $COPY/configure.log"
+    fi
+    log "Full build of the copy ($BUILD_JOBS jobs; about 1-2 h next to the training runs)"
+    ./ns3 build -j "$BUILD_JOBS" > "$COPY/build.log" 2>&1 || die "build failed; see $COPY/build.log"
+    cmake --build cmake-cache -j "$BUILD_JOBS" >> "$COPY/build.log" 2>&1 ||
+        die "build of the remaining targets (Python bridge) failed; see $COPY/build.log"
+    touch "$DONE_MARK"
 fi
 [ -f "$SO" ] || die "pb_twt_interface_py.so missing in $CTWT"
 [ -x "$BIN" ] || die "twt-main-simulation binary missing: $BIN"

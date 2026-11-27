@@ -3,12 +3,13 @@
 #   hw-constrained/status.sh
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RUNS="$HERE/runs"
-COPY="$(cd "$HERE/../../../../.." && pwd)/ns-3.44-orig"
+NS3="$(cd "$HERE/../../../../.." && pwd)"          # …/ns-3.44
+COPY="$(dirname "$NS3")/$(basename "$NS3")-orig"   # …/ns-3.44-orig, next to it
 REPRO="$COPY/contrib/ai/examples/twt/ppo-sb3-scripts/checkpoints/repro"
 
 echo "== Machine   up since $(uptime -s)   free disk $(df -h "$HERE" | awk 'NR==2 {print $4}')"
 echo "   running: $(pgrep -fc twt-main-simulation-default) ns-3 simulations," \
-     "$(pgrep -fc 'train_hw.py') bench training runs, $(pgrep -fc 'repro_train.py') reproduction"
+     "$(pgrep -fc '^[^ ]*python[^ ]* train_hw.py') bench training runs, $(pgrep -fc '^[^ ]*python[^ ]* [^ ]*repro_train.py') reproduction"
 for s in run_eda.sh launch_sweep.sh launch_final.sh reproduce_published.sh; do
     pgrep -f "$s" >/dev/null && echo "   active launcher: $s"
 done
@@ -35,7 +36,7 @@ elif [ -d "$REPRO" ]; then
     for d in "$REPRO"/*_twt_energy_*; do
         [ -d "$d" ] || continue
         n=$(($(cat "$d"/training_log_*.jsonl 2>/dev/null | wc -l) - 1))
-        echo "   $(basename "$d"): $((n < 0 ? 0 : n)) of ~422 episodes$( [ -f "$d"/*final.zip ] && echo ', finished')"
+        echo "   $(basename "$d"): $((n < 0 ? 0 : n)) of ~422 episodes$( ls "$d"/*final.zip >/dev/null 2>&1 && echo ', finished')"
     done
 else
     echo "   not started"

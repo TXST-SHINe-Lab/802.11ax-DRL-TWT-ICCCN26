@@ -315,6 +315,13 @@ def main(argv=None):
     if os.path.exists(os.path.join(run_dir, "model_final.zip")):
         print(f"{run_dir} already has a final model; delete it to rerun.")
         return run_dir
+    if os.path.isdir(run_dir):
+        # A run that was interrupted (machine shut down, killed). Its logs are appended to, so
+        # starting again in the same folder would mix two runs; move it aside and start fresh.
+        aside = os.path.join(args.out_dir, "_incomplete", f"{run_name}-{time.strftime('%Y%m%d_%H%M%S')}")
+        os.makedirs(os.path.dirname(aside), exist_ok=True)
+        os.replace(run_dir, aside)
+        print(f"Moved the interrupted run to {aside}; starting {run_name} from scratch.", flush=True)
     os.makedirs(os.path.join(run_dir, "checkpoints"), exist_ok=True)
     comm_root = args.comm_root or os.path.join("/tmp", f"twt_hw_{os.getpid()}")
 

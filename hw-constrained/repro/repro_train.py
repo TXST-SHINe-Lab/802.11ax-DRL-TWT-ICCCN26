@@ -37,6 +37,13 @@ def main():
     # Ahmed's scripts, from the ns-3 copy this file lives in (…/twt/hw-constrained/repro/).
     twt_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     ppo_dir = os.path.join(twt_dir, "ppo-sb3-scripts")
+    # Refuse to train on anything but Ahmed's original simulator. (This file must be run from
+    # the ns-3 COPY: run from the main tree it would drive the bench build instead.)
+    constants = open(os.path.join(twt_dir, "twt-constants.h")).read()
+    if "EE7331-HW-PATCH" in constants or "define ACTIVE_NUM_STA 16" not in constants:
+        raise SystemExit(f"{twt_dir} is not the original 16-STA simulator (bench patch present?). "
+                         "Run the repro_train.py inside the ns-3 copy.")
+    print(f"[repro_train] original 16-STA simulator: {twt_dir}", flush=True)
     sys.path.insert(0, ppo_dir)
     os.chdir(ppo_dir)
 

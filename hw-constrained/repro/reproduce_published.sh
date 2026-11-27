@@ -91,6 +91,11 @@ fi
 (cd "$CTWT" && "$PY" -c "import pb_twt_interface_py") || die "the copy's Python bridge does not import"
 log "Build OK"
 
+# The copy must carry these scripts (it does when they were pulled before the copy was made);
+# refresh them from the main tree so fixes made after the copy reach it.
+mkdir -p "$CTWT/hw-constrained/repro"
+cp "$HERE"/repro_train.py "$HERE"/compare_repro.py "$CTWT/hw-constrained/repro/"
+
 # ---- 3. train ---------------------------------------------------------------------------
 # FileCommEnv spawns its runner as "python3.11"; point that name at this venv's interpreter.
 SHIM="$COPY/.py311-shim"
@@ -139,7 +144,8 @@ EOF
 )
         log "$algo: training with the published hyperparameters ($(basename "$pub"))"
         log "  $args"
-        "$PY" "$HERE/repro_train.py" "$algo" -- $args --output-dir "$OUTROOT" \
+        # The COPY's repro_train.py: it locates the simulator next to itself.
+        "$PY" "$CTWT/hw-constrained/repro/repro_train.py" "$algo" -- $args --output-dir "$OUTROOT" \
             --tensorboard-log "$CTWT/ppo-sb3-scripts/tb_logs/repro" \
             > "$OUTROOT/train_${algo}.log" 2>&1 || die "$algo training failed; see $OUTROOT/train_${algo}.log"
         prefix=$([ "$algo" = mlp ] && echo ppo_V1 || echo lstm_ppo_V1)
